@@ -13,7 +13,7 @@ interface IAuthContext {
 export const AuthContext = createContext<IAuthContext | null>(null);
 
 // 인증이 필요한 페이지 목록
-const protectedPageList = ['/vendor', '/customer'];
+const protectedPageList = ['/vendor'];
 
 const isProtectedPage = (pathname: string) => {
   return protectedPageList.some((page) => pathname.startsWith(page));
