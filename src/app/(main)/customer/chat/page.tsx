@@ -53,6 +53,7 @@ export default function ChatPage() {
       if (client) client.disconnectUser();
       setClient(null);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedUser]); // 유저가 바뀌면 재연결
 
   // 3. 테스트용 방 만들기 함수 (버튼 클릭 시 실행)

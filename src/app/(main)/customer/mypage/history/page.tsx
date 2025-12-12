@@ -1,11 +1,7 @@
-interface IPageProps {
-  children?: React.ReactNode;
-}
-
-const Page = ({ children }: IPageProps) => {
+const Page = () => {
   return (
     <div className="block">
-      <div>{children}</div>
+      <div></div>
     </div>
   );
 };
