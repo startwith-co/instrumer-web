@@ -19,16 +19,6 @@ const Error = ({ error }: IErrorProps) => {
           <div className="flex flex-col items-center justify-center gap-y-1">
             <div className="text-center text-ui-fg-muted text-balance">{error.message}</div>
           </div>
-          {/* <Button
-            size="small"
-            variant="secondary"
-            onClick={() => {
-              window.location.reload();
-            }}
-          >
-            <ArrowPathMini className="mr-2" />
-            Reload
-          </Button> */}
         </div>
       </div>
     </div>
