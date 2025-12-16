@@ -1,19 +1,22 @@
 'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useChannelStateContext } from 'stream-chat-react';
+import { useChatContext, useChannelStateContext } from 'stream-chat-react';
 
 /**
  * 채팅방 헤더 컴포넌트
  * 상대방 아바타와 이름 표시
  */
 const ChatHeader = () => {
+  const { client } = useChatContext();
   const { channel } = useChannelStateContext();
 
-  console.log(channel);
-  // 채널 정보에서 상대방 이름/이미지 추출
-  const displayTitle = channel?.data?.members?.[0]?.user?.name || '채팅방';
-  const displayImage = channel?.data?.members?.[0]?.user?.image as string | undefined;
+  // 현재 로그인한 사용자를 제외한 상대방 찾기
+  const members = Object.values(channel?.state?.members || {});
+  const otherMember = members.find((member) => member.user?.id !== client.userID);
+
+  const displayTitle = otherMember?.user?.name || otherMember?.user?.id || '채팅방';
+  const displayImage = otherMember?.user?.image as string | undefined;
 
   const getInitials = (name: string) => {
     return name.charAt(0).toUpperCase();
