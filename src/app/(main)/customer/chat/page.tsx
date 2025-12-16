@@ -3,6 +3,7 @@
 import ChatChannelPreview from '@/components/chat/chat-channel-preview';
 import ChatChannelSearch from '@/components/chat/chat-channel-search';
 import ChatEmptyStateIndicator from '@/components/chat/chat-empty-state-indicator';
+import ChatHeader from '@/components/chat/chat-header';
 import ChatPaginator from '@/components/chat/chat-paginator';
 import useChatClient from '@/hooks/use-chat-client';
 import { useSearchParams } from 'next/navigation';
@@ -60,7 +61,7 @@ const ChatPage = () => {
 
   return (
     <Chat client={client}>
-      <div className="flex flex-row gap-12 h-[calc(100vh-64px)] bg-[#F8F9FB] px-24 py-12">
+      <div className="flex flex-row gap-12 h-[calc(100vh-90px)] bg-[#F8F9FB] px-24 py-12">
         {/* 사이드바: 채팅 목록 */}
         <aside className="w-[400px] shrink-0 shadow-[0px_0px_10px_0px_#0000001A] rounded-[10px] overflow-hidden ">
           <ChannelList
@@ -78,9 +79,10 @@ const ChatPage = () => {
         </aside>
 
         {/* 메인: 채팅방 */}
-        <main className="flex-1">
+        <main className="flex-1 shrink-0 shadow-[0px_0px_10px_0px_#0000001A] rounded-[10px] overflow-hidden ">
           <Channel channel={activeChannel}>
             <Window>
+              <ChatHeader />
               <MessageList />
               <MessageInput />
             </Window>
