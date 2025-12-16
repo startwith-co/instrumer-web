@@ -1,14 +1,17 @@
 'use client';
 
+import TestButton from '../test-button';
 import { Dropdown } from '@/components/ui/dropdown';
 import { CATEGORY_OPTIONS } from '@/constants/solution-constants';
 import { ChevronDown } from '@medusajs/icons';
+import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
   const router = useRouter();
+  const { data: session } = useSession();
 
   return (
     <header className="w-full backdrop-blur-[2000px] shadow-[0px_5px_10px_0px_#0000001A] sticky top-0 z-10">
@@ -38,12 +41,24 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-6">
-          <Link href="/login" className="text-[18px] text-gray-700 hover:text-gray-900">
-            로그인
-          </Link>
-          <Link href="/signup" className="text-[18px] text-gray-700 hover:text-gray-900">
-            회원가입
-          </Link>
+          {session ? (
+            <>
+              <span className="text-[18px] text-gray-700">{session.user?.name}</span>
+              <button onClick={() => signOut()} className="text-[18px] text-red-500 hover:text-red-700">
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-[18px] text-gray-700 hover:text-gray-900">
+                로그인
+              </Link>
+              <Link href="/signup" className="text-[18px] text-gray-700 hover:text-gray-900">
+                회원가입
+              </Link>
+            </>
+          )}
+          <TestButton />
         </div>
       </div>
     </header>

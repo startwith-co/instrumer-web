@@ -17,10 +17,13 @@ const credentialsProviderOption: CredentialsConfig = {
       //   password: credentials?.password as string,
       // });
 
-      if (credentials?.login === 'admin' && credentials?.password === 'admin1234') {
+      // 테스트용 임의 ID 로그인 (password가 'test'인 경우)
+      if (credentials?.password === 'test' && credentials?.login) {
         return {
-          id: credentials?.login as string,
-          accessToken: 'admin',
+          id: credentials.login as string,
+          name: credentials.login as string,
+          role: 'customer',
+          accessToken: '',
           refreshToken: '',
         };
       }
@@ -51,11 +54,23 @@ export const authOptions: NextAuthOptions = {
 
       // [1] 최초 로그인 시
       if (account && user) {
+        // 테스트용 빈 토큰인 경우 jwtDecode 스킵
+        const accessToken = user.accessToken as string;
+        let exp: number | undefined;
+
+        if (accessToken) {
+          try {
+            exp = jwtDecode(accessToken).exp as number;
+          } catch {
+            // 유효하지 않은 JWT인 경우 무시
+          }
+        }
+
         return {
           user,
-          accessToken: user.accessToken,
+          accessToken,
           refreshToken: user.refreshToken,
-          exp: jwtDecode(user.accessToken as string).exp as number,
+          exp,
         };
       }
 

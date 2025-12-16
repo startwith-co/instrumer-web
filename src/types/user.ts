@@ -1,3 +1,5 @@
+export type UserRole = 'customer' | 'vendor';
+
 export interface IUser {
   id: number;
   login: string;
