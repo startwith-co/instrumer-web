@@ -32,6 +32,14 @@ export const useSolutionFilter = () => {
     setPendingFilters((prev) => ({ ...prev, [key]: value ? [value] : [] }));
   }, []);
 
+  const setBudgetFilter = useCallback((minPrice?: number, maxPrice?: number) => {
+    setPendingFilters((prev) => ({
+      ...prev,
+      minPrice: minPrice !== undefined ? [minPrice.toString()] : [],
+      maxPrice: maxPrice !== undefined ? [maxPrice.toString()] : [],
+    }));
+  }, []);
+
   const toggleFilter = useCallback((key: FilterKey, value: string) => {
     setPendingFilters((prev) => {
       const current = prev[key] || [];
@@ -94,6 +102,7 @@ export const useSolutionFilter = () => {
     pendingFilters,
     appliedFilters,
     setFilter,
+    setBudgetFilter,
     toggleFilter,
     applyFilters,
     removeFilter,

@@ -10,7 +10,7 @@ export interface ICreateSolutionReviewRequest extends Record<string, unknown> {
 }
 
 // 솔루션 리뷰 목록 조회 파라미터
-export interface ISolutionReviewListParams {
+export interface ISolutionReviewListParams extends Record<string, unknown> {
   page?: number;
   size?: number;
 }

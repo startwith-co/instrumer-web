@@ -22,7 +22,7 @@ export type Category =
   | 'PAYMENT_SUBSCRIPTION'
   | 'CONTENT_CREATION_DESIGN';
 
-export type FilterKey = 'category' | 'budget';
+export type FilterKey = 'category' | 'minPrice' | 'maxPrice';
 
 export interface IFilterConfig {
   paramName: string;

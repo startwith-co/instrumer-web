@@ -8,8 +8,15 @@ import { useSolutionFilter } from '@/hooks/use-solution-filter';
 import { Budget, Category } from '@/types';
 
 const SolutionFilter = () => {
-  const { pendingFilters, appliedFilters, setFilter, applyFilters, removeFilter, hasActiveFilters } =
+  const { pendingFilters, appliedFilters, setBudgetFilter, setFilter, applyFilters, removeFilter, hasActiveFilters } =
     useSolutionFilter();
+
+  // 현재 선택된 budget 옵션 찾기
+  const selectedBudget = BUDGET_OPTIONS.find(
+    (opt) =>
+      (opt.minPrice?.toString() === pendingFilters.minPrice[0] || (!opt.minPrice && !pendingFilters.minPrice[0])) &&
+      (opt.maxPrice?.toString() === pendingFilters.maxPrice[0] || (!opt.maxPrice && !pendingFilters.maxPrice[0]))
+  );
 
   return (
     <div className="flex w-[325px] shrink-0 flex-col gap-[50px]">
@@ -31,8 +38,11 @@ const SolutionFilter = () => {
               <p className="mb-2 text-sm text-gray-600">예산 설정</p>
               <FilterPillGroup<Budget>
                 options={BUDGET_OPTIONS}
-                selected={(pendingFilters.budget[0] as Budget) || null}
-                onSelect={(value) => setFilter('budget', value)}
+                selected={selectedBudget?.value || null}
+                onSelect={(value) => {
+                  const option = BUDGET_OPTIONS.find((opt) => opt.value === value);
+                  setBudgetFilter(option?.minPrice, option?.maxPrice);
+                }}
               />
             </div>
 

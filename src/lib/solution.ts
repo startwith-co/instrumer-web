@@ -2,11 +2,11 @@ import { fetchApi } from './base';
 import { IBaseResponse } from '@/types/api';
 import {
   ICreateSolutionRequest,
-  IUpdateSolutionRequest,
   ICreateSolutionResponse,
-  IGetSolutionResponse,
   IGetSolutionListResponse,
+  IGetSolutionResponse,
   ISolutionListParams,
+  IUpdateSolutionRequest,
 } from '@/types/solution';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -20,7 +20,7 @@ export const useSolutions = (params?: ISolutionListParams) => {
 // 솔루션 상세 조회 (Public)
 export const useSolution = (solutionSeq?: number) => {
   return useQuery<IBaseResponse<IGetSolutionResponse>>({
-    queryKey: ['/api/public/solutions', solutionSeq],
+    queryKey: [`/api/public/solutions/${solutionSeq}`],
     enabled: !!solutionSeq,
   });
 };

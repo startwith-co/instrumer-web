@@ -1,5 +1,4 @@
 import { fetchApi } from './base';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { IBaseResponse } from '@/types/api';
 import {
   ICreateSolutionReviewRequest,
@@ -7,11 +6,12 @@ import {
   IGetSolutionReviewPageResponse,
   ISolutionReviewListParams,
 } from '@/types/review';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // 솔루션별 리뷰 목록 조회 (Public)
 export const useSolutionReviews = (solutionSeq?: number, params?: ISolutionReviewListParams) => {
   return useQuery<IBaseResponse<IGetSolutionReviewPageResponse>>({
-    queryKey: ['/api/public/solutions', solutionSeq, 'reviews', params],
+    queryKey: [`/api/public/solutions/${solutionSeq}/reviews`, params],
     enabled: !!solutionSeq,
   });
 };
@@ -27,7 +27,8 @@ export const useCreateReviewMutation = () => {
       ),
     onSuccess: async (_, variables) => {
       await queryClient.invalidateQueries({
-        queryKey: ['/api/public/solutions', variables.solutionSeq, 'reviews'],
+        queryKey: [`/api/public/solutions/${variables.solutionSeq}/reviews`],
+        refetchType: 'all',
       });
     },
   });
