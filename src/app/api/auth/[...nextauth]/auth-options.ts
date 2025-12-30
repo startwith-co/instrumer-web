@@ -1,3 +1,5 @@
+import { login, tokenRefresh } from '@/lib/auth';
+import dayjs from 'dayjs';
 import { jwtDecode } from 'jwt-decode';
 import { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider, { CredentialsConfig } from 'next-auth/providers/credentials';
@@ -7,24 +9,22 @@ const credentialsProviderOption: CredentialsConfig = {
   id: 'login-credentials',
   name: 'login-credentials',
   credentials: {
-    login: { label: 'Email', type: 'text' },
+    email: { label: 'Email', type: 'text' },
     password: { label: 'Password', type: 'password' },
   },
   async authorize(credentials: Record<string, unknown> | undefined) {
     try {
-      // const user = await login({
-      //   login: credentials?.login as string,
-      //   password: credentials?.password as string,
-      // });
+      const response = await login({
+        email: credentials?.email as string,
+        password: credentials?.password as string,
+      });
 
-      // 테스트용 임의 ID 로그인 (password가 'test'인 경우)
-      if (credentials?.password === 'test' && credentials?.login) {
+      if (response) {
         return {
-          id: credentials.login as string,
-          name: credentials.login as string,
-          role: 'customer',
-          accessToken: '',
-          refreshToken: '',
+          id: credentials?.email as string,
+          name: credentials?.email as string,
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
         };
       }
 
@@ -36,9 +36,6 @@ const credentialsProviderOption: CredentialsConfig = {
   },
 };
 export const authOptions: NextAuthOptions = {
-  pages: {
-    signIn: '/login',
-  },
   secret: process.env.NEXTAUTH_SECRET,
   providers: [CredentialsProvider(credentialsProviderOption)],
   callbacks: {
@@ -54,7 +51,6 @@ export const authOptions: NextAuthOptions = {
 
       // [1] 최초 로그인 시
       if (account && user) {
-        // 테스트용 빈 토큰인 경우 jwtDecode 스킵
         const accessToken = user.accessToken as string;
         let exp: number | undefined;
 
@@ -74,17 +70,29 @@ export const authOptions: NextAuthOptions = {
         };
       }
 
-      // // [2] 로그인 이후 토큰 만료 전
-      // if (dayjs().isBefore(dayjs((token.exp as number) * 1000))) {
-      //   return token;
-      // }
+      // [2] 로그인 이후 토큰 만료 전
+      if (token.exp && dayjs().isBefore(dayjs((token.exp as number) * 1000))) {
+        return token;
+      }
 
-      // // [3] 로그인 이후 토큰 만료 후
-      // const { accessToken, refreshToken } = await tokenRefresh(token.refreshToken as string);
+      // [3] 로그인 이후 토큰 만료 후 - 리프레시
+      if (token.refreshToken) {
+        try {
+          const { accessToken, refreshToken } = await tokenRefresh(token.refreshToken as string);
+          const exp = jwtDecode(accessToken).exp as number;
 
-      // token.accessToken = accessToken;
-      // token.refreshToken = refreshToken;
-      // token.exp = jwtDecode(accessToken).exp as number;
+          return {
+            ...token,
+            accessToken,
+            refreshToken,
+            exp,
+          };
+        } catch (error) {
+          console.error('Token refresh failed:', error);
+          // 리프레시 실패 시 토큰 무효화
+          return { ...token, error: 'RefreshTokenError' };
+        }
+      }
 
       return token;
     },
@@ -92,6 +100,9 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token.user) {
         session.user = token.user as User;
+      }
+      if (token.error) {
+        session.error = token.error as string;
       }
       return session;
     },

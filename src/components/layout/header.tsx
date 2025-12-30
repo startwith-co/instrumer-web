@@ -1,5 +1,6 @@
 'use client';
 
+import LoginModal from '../auth/login-modal';
 import TestButton from '../test-button';
 import { Dropdown } from '@/components/ui/dropdown';
 import { CATEGORY_OPTIONS } from '@/constants/solution-constants';
@@ -50,10 +51,8 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Link href="/login" className="text-[18px] text-gray-700 hover:text-gray-900">
-                로그인
-              </Link>
-              <Link href="/signup" className="text-[18px] text-gray-700 hover:text-gray-900">
+              <LoginModal />
+              <Link href="/register" className="text-[18px] text-gray-700 hover:text-gray-900">
                 회원가입
               </Link>
             </>

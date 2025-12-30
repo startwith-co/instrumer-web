@@ -1,3 +1,4 @@
+import Modal from '@/components/common/modal';
 import AlertProvider from './alert-provider';
 import AuthProvider from './auth-provider';
 import ModalProvider from './modal-provider';
@@ -11,13 +12,14 @@ interface ICoreProviderProps {
 const CoreProvider = ({ children }: ICoreProviderProps) => {
   return (
     <SessionProvider>
-      <AuthProvider>
-        <ModalProvider>
+      <ModalProvider>
+        <AuthProvider>
           <AlertProvider>
             <QueryProvider>{children}</QueryProvider>
           </AlertProvider>
-        </ModalProvider>
-      </AuthProvider>
+        </AuthProvider>
+        <Modal />
+      </ModalProvider>
     </SessionProvider>
   );
 };
