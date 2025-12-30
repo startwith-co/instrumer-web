@@ -6,7 +6,7 @@ import { FilterKey } from '@/types';
 
 interface IAppliedFiltersProps {
   appliedFilters: FilterValues;
-  onRemove: (key: FilterKey, value?: string) => void;
+  onRemove: (keys: FilterKey | FilterKey[], value?: string) => void;
 }
 
 const getCategoryLabel = (value: string): string => {
@@ -28,7 +28,7 @@ const AppliedFilters = ({ appliedFilters, onRemove }: IAppliedFiltersProps) => {
   const activeFilters: { key: FilterKey | 'budget'; value?: string; label: string }[] = [];
 
   // 카테고리 필터
-  if (appliedFilters.category[0]) {
+  if (appliedFilters.category?.[0]) {
     activeFilters.push({
       key: 'category',
       value: appliedFilters.category[0],
@@ -37,7 +37,7 @@ const AppliedFilters = ({ appliedFilters, onRemove }: IAppliedFiltersProps) => {
   }
 
   // 예산 필터 (minPrice, maxPrice를 하나의 필터로 표시)
-  const budgetLabel = getBudgetLabel(appliedFilters.minPrice[0], appliedFilters.maxPrice[0]);
+  const budgetLabel = getBudgetLabel(appliedFilters.minPrice?.[0], appliedFilters.maxPrice?.[0]);
   if (budgetLabel) {
     activeFilters.push({
       key: 'budget',
@@ -49,8 +49,7 @@ const AppliedFilters = ({ appliedFilters, onRemove }: IAppliedFiltersProps) => {
 
   const handleRemove = (key: FilterKey | 'budget') => {
     if (key === 'budget') {
-      onRemove('minPrice');
-      onRemove('maxPrice');
+      onRemove(['minPrice', 'maxPrice']);
     } else {
       onRemove(key);
     }
