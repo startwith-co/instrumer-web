@@ -13,6 +13,7 @@ interface IControlledInputProps<T extends FieldValues> extends Omit<
   name: Path<T>;
   type?: HTMLInputTypeAttribute;
   label?: string;
+  variant?: 'default' | 'underline';
   rules?: Parameters<UseFormReturn<T>['register']>[1];
 }
 
@@ -21,6 +22,7 @@ export const ControlledInput = <T extends FieldValues>({
   name,
   type = 'text',
   label,
+  variant,
   rules,
   ...props
 }: IControlledInputProps<T>) => {
@@ -53,6 +55,7 @@ export const ControlledInput = <T extends FieldValues>({
             name={field.name}
             ref={field.ref}
             label={label}
+            variant={variant}
             error={form.formState.errors?.[name]?.message as string}
             type={type === 'number' ? 'text' : type}
             required={!!rules?.required}
