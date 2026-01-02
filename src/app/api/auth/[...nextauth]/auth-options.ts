@@ -31,8 +31,8 @@ const credentialsProviderOption: CredentialsConfig = {
 
       return null;
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.error('Login failed:', error);
+      return null;
     }
   },
 };
