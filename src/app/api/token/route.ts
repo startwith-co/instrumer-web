@@ -9,10 +9,13 @@ const serverClient = StreamChat.getInstance(
 export async function POST(request: Request) {
   const { userId, userName } = await request.json();
 
-  // 현재 사용자 등록/갱신
-  if (userId) {
-    await serverClient.upsertUser({ id: userId, name: userName || userId });
+  // userId 검증
+  if (!userId) {
+    return NextResponse.json({ error: 'userId is required' }, { status: 400 });
   }
+
+  // 현재 사용자 등록/갱신
+  await serverClient.upsertUser({ id: userId, name: userName || userId });
 
   // 토큰 생성
   const token = serverClient.createToken(userId);
