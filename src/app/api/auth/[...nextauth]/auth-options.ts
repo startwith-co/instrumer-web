@@ -101,7 +101,18 @@ export const authOptions: NextAuthOptions = {
         } catch (error) {
           console.error('Token refresh failed:', error);
           // 리프레시 실패 시 토큰 무효화
-          return { ...token, error: 'RefreshTokenError' };
+          return {
+            ...token,
+            user: {
+              ...(token.user as User),
+              accessToken: null,
+              refreshToken: null,
+            },
+            accessToken: null,
+            refreshToken: null,
+            exp: null,
+            error: 'RefreshTokenError',
+          };
         }
       }
 

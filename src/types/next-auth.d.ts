@@ -14,8 +14,8 @@ declare module 'next-auth' {
     image?: string;
     role?: UserRole;
     brandId?: string;
-    accessToken: string;
-    refreshToken: string;
+    accessToken: string | null;
+    refreshToken: string | null;
     userType?: UserType;
     userSeq?: number;
   }
