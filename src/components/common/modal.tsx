@@ -15,12 +15,12 @@ const Modal = () => {
 
   return (
     <>
-      {openedModals.map((modal, index) => {
+      {openedModals.map((modal) => {
         const { id, component } = modal;
 
         return (
           <div
-            key={index}
+            key={id}
             className="fixed inset-0 z-[9999] flex h-dvh w-screen items-center justify-center overflow-hidden"
           >
             <div
