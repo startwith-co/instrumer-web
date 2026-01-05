@@ -107,6 +107,7 @@ export interface IGetSolutionResponse {
   reviewAverage: number;
   vendorSeq: number;
   vendorBusinessName: string;
+  profileImageUrl?: string;
 }
 
 // 솔루션 목록 아이템

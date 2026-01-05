@@ -6,7 +6,6 @@ import {
   ILoginUserResponse,
   IRegisterVendorRequest,
   IRegisterConsumerRequest,
-  ISendEmailRequest,
   IVerifyEmailAuthKeyRequest,
   IReissueTokenRequest,
   IReIssueTokenResponse,
@@ -39,8 +38,8 @@ export const useRegisterConsumerMutation = () => {
 // 이메일 전송 (인증코드 발송)
 export const useSendEmailMutation = () => {
   return useMutation({
-    mutationFn: async (data: ISendEmailRequest) =>
-      await fetchApi.post<IBaseResponse<Record<string, string>>>('/api/public/send-email', data),
+    mutationFn: async (email: string) =>
+      await fetchApi.get<IBaseResponse<string>>(`/api/public/send-email/${email}`),
   });
 };
 

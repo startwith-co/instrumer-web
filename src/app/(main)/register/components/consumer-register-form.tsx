@@ -52,7 +52,7 @@ const ConsumerRegisterForm = () => {
     if (!isValid) return;
 
     try {
-      await sendEmail({ email: watchEmail });
+      await sendEmail(watchEmail);
       setIsEmailSent(true);
       startTimer(60);
       form.clearErrors('email');

@@ -41,11 +41,6 @@ export interface IRegisterConsumerRequest extends Record<string, unknown> {
   password: string;
 }
 
-// 이메일 전송 요청
-export interface ISendEmailRequest extends Record<string, unknown> {
-  email: string;
-}
-
 // 이메일 인증 확인 요청
 export interface IVerifyEmailAuthKeyRequest extends Record<string, unknown> {
   email: string;
