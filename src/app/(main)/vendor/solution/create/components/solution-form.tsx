@@ -34,7 +34,15 @@ const SolutionForm = () => {
       thumbnailUrl: '',
       pdfUrl: '',
       additionalImages: [],
-      plans: [],
+      plans: [
+        {
+          name: '',
+          subName: '',
+          price: 0,
+          planType: 'MONTHLY',
+          details: [{ name: '', context: '' }],
+        },
+      ],
       keywords: [],
     },
   });

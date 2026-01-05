@@ -48,7 +48,7 @@ export interface ISolutionPlanDetail {
 export interface ISolutionPlan {
   name: string;
   subName?: string;
-  price: number;
+  price: number | null; // null = 가격 문의
   planType: string;
   details?: ISolutionPlanDetail[];
 }
