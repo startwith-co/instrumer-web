@@ -1,17 +1,17 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import Input from '@/components/ui/input';
-import { X, Plus } from 'lucide-react';
-import { useState, KeyboardEvent } from 'react';
+import { X } from 'lucide-react';
+import { KeyboardEvent, useState } from 'react';
 
 interface KeywordInputProps {
   keywords: string[];
   onChange: (keywords: string[]) => void;
   maxKeywords?: number;
+  error?: string;
 }
 
-const KeywordInput = ({ keywords, onChange, maxKeywords = 10 }: KeywordInputProps) => {
+const KeywordInput = ({ keywords, onChange, maxKeywords = 10, error }: KeywordInputProps) => {
   const [inputValue, setInputValue] = useState('');
 
   const handleAddKeyword = () => {
@@ -36,6 +36,8 @@ const KeywordInput = ({ keywords, onChange, maxKeywords = 10 }: KeywordInputProp
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    // 한글 입력 중(IME 조합 중)에는 무시
+    if (e.nativeEvent.isComposing) return;
     if (e.key === 'Enter') {
       e.preventDefault();
       handleAddKeyword();
@@ -44,55 +46,46 @@ const KeywordInput = ({ keywords, onChange, maxKeywords = 10 }: KeywordInputProp
 
   return (
     <div className="space-y-4">
-      {/* 입력 필드 */}
-      <div className="flex gap-2">
-        <Input
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="키워드를 입력하세요 (Enter로 추가)"
-          className="flex-1"
-        />
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleAddKeyword}
-          disabled={!inputValue.trim() || keywords.length >= maxKeywords}
-        >
-          <Plus className="mr-1 h-4 w-4" />
-          추가
-        </Button>
+      {/* 라벨 */}
+      <label className="block text-sm text-gray-700">
+        키워드 입력 <span className="text-red-500">*</span>
+      </label>
+
+      {/* 입력 필드 + 태그 (가로 배치) */}
+      <div className="flex items-center gap-4">
+        <div className="w-[400px] shrink-0">
+          <Input
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={handleKeyDown}
+            variant="underline"
+            placeholder="키워드를 입력해주세요."
+          />
+        </div>
+
+        {/* 키워드 태그 목록 */}
+        {keywords.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            {keywords.map((keyword, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center gap-2 rounded-md bg-[#F1F1F1] px-3 py-1.5 text-sm text-gray-700"
+              >
+                {keyword}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveKeyword(index)}
+                  className="text-red-400 hover:text-red-600"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* 키워드 태그 목록 */}
-      {keywords.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {keywords.map((keyword, index) => (
-            <span
-              key={index}
-              className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
-            >
-              #{keyword}
-              <button
-                type="button"
-                onClick={() => handleRemoveKeyword(index)}
-                className="ml-1 rounded-full p-0.5 hover:bg-primary/20"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* 안내 문구 */}
-      <p className="text-xs text-gray-500">
-        {keywords.length}/{maxKeywords}개 등록됨
-      </p>
-
-      {keywords.length === 0 && (
-        <p className="text-center text-sm text-gray-500">등록된 키워드가 없습니다.</p>
-      )}
+      {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
 };
