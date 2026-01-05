@@ -51,17 +51,18 @@ const SolutionForm = () => {
 
   const onSubmit = async (data: ISolutionFormData) => {
     try {
+      const images = [
+        ...(data.thumbnailUrl ? [{ imageUrl: data.thumbnailUrl, imageType: 'representation' }] : []),
+        ...(data.pdfUrl ? [{ imageUrl: data.pdfUrl, imageType: 'detail' }] : []),
+        ...data.additionalImages.filter(Boolean).map((url) => ({ imageUrl: url, imageType: 'optional' })),
+      ];
+
       const requestData: ICreateSolutionRequest = {
         name: data.name,
         explanation: data.explanation,
         category: data.category,
         price: data.price,
-        images: data.thumbnailUrl
-          ? [
-              { imageUrl: data.thumbnailUrl, imageType: 'THUMBNAIL' },
-              ...data.additionalImages.filter(Boolean).map((url) => ({ imageUrl: url, imageType: 'DETAIL' })),
-            ]
-          : undefined,
+        images: images.length > 0 ? images : undefined,
         plans: data.plans.length > 0 ? data.plans : undefined,
         keywords: data.keywords.length > 0 ? data.keywords : undefined,
       };

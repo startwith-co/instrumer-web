@@ -8,21 +8,30 @@ import { X, ImagePlus, Upload } from 'lucide-react';
 import Image from 'next/image';
 
 const IMAGE_TYPE_OPTIONS = [
-  { value: 'THUMBNAIL', label: '썸네일' },
-  { value: 'DETAIL', label: '상세 이미지' },
-  { value: 'BANNER', label: '배너' },
+  { value: 'representation', label: '대표 이미지' },
+  { value: 'detail', label: '상세 설명 PDF' },
+  { value: 'optional', label: '추가 이미지' },
 ];
 
 interface ImageUploaderProps {
   images: ISolutionImage[];
   onChange: (images: ISolutionImage[]) => void;
+  multiple?: boolean;
+  maxCount?: number;
 }
 
-const ImageUploader = ({ images, onChange }: ImageUploaderProps) => {
+const ImageUploader = ({ images, onChange, multiple = true, maxCount }: ImageUploaderProps) => {
+  const isMaxReached = maxCount !== undefined && images.length >= maxCount;
+  const remainingCount = maxCount !== undefined ? maxCount - images.length : undefined;
+
   const handleUploadSuccess = (urls: string[]) => {
-    const newImages = urls.map((url) => ({
+    // maxCount가 설정된 경우, 남은 슬롯만큼만 추가
+    const availableSlots = maxCount !== undefined ? maxCount - images.length : urls.length;
+    const urlsToAdd = urls.slice(0, availableSlots);
+
+    const newImages = urlsToAdd.map((url) => ({
       imageUrl: url,
-      imageType: 'DETAIL',
+      imageType: 'optional',
     }));
     onChange([...images, ...newImages]);
   };
@@ -41,12 +50,12 @@ const ImageUploader = ({ images, onChange }: ImageUploaderProps) => {
   return (
     <div className="space-y-4">
       {/* 업로드 버튼 */}
-      <S3Uploader onSuccess={handleUploadSuccess} accept="image/*" multiple maxSize={10 * 1024 * 1024}>
+      <S3Uploader onSuccess={handleUploadSuccess} accept="image/*" multiple={multiple && !isMaxReached} maxSize={10 * 1024 * 1024}>
         {({ open, uploading, progress }) => (
           <button
             type="button"
             onClick={open}
-            disabled={uploading}
+            disabled={uploading || isMaxReached}
             className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 transition-colors hover:border-primary hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {uploading ? (
@@ -54,11 +63,19 @@ const ImageUploader = ({ images, onChange }: ImageUploaderProps) => {
                 <Upload className="mb-2 h-8 w-8 animate-pulse text-gray-400" />
                 <span className="text-sm text-gray-500">업로드 중... {progress}%</span>
               </>
+            ) : isMaxReached ? (
+              <>
+                <ImagePlus className="mb-2 h-8 w-8 text-gray-300" />
+                <span className="text-sm text-gray-400">최대 {maxCount}개까지 업로드 가능합니다</span>
+              </>
             ) : (
               <>
                 <ImagePlus className="mb-2 h-8 w-8 text-gray-400" />
                 <span className="text-sm text-gray-500">클릭하여 이미지 업로드</span>
-                <span className="text-xs text-gray-400">최대 10MB, 여러 장 선택 가능</span>
+                <span className="text-xs text-gray-400">
+                  최대 10MB{multiple ? ', 여러 장 선택 가능' : ''}
+                  {remainingCount !== undefined && ` (${remainingCount}개 추가 가능)`}
+                </span>
               </>
             )}
           </button>

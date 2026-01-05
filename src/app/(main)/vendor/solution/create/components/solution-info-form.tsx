@@ -168,24 +168,16 @@ const SolutionInfoForm = () => {
       {/* 추가 이미지 (선택) */}
       <div>
         <label className="mb-2 block text-sm text-gray-700">
-          추가 이미지<span className="text-gray-400">(선택)</span>
+          추가 이미지<span className="text-gray-400">(선택, 최대 4개)</span>
         </label>
-        <div className="grid grid-cols-4 gap-4">
-          {[0, 1, 2, 3].map((index) => (
-            <FileUploadBox
-              key={index}
-              value={additionalImages?.[index] || ''}
-              onChange={(url) => {
-                const newImages = [...(additionalImages || [])];
-                newImages[index] = url;
-                setValue('additionalImages', newImages);
-              }}
-              type="image"
-              label="이미지 등록"
-              className="w-full"
-            />
-          ))}
-        </div>
+        <FileUploadBox
+          multiple
+          values={additionalImages || []}
+          onChangeMultiple={(urls) => setValue('additionalImages', urls)}
+          maxCount={4}
+          type="image"
+          label="이미지 등록"
+        />
       </div>
     </section>
   );
