@@ -3,6 +3,7 @@
 import CustomerReviewsSection from './components/customer-reviews-section';
 import ServicePlansSection from './components/service-plans-section';
 import SolutionDetailSkeleton from './components/solution-detail-skeleton';
+import SolutionHeroSection from './components/solution-hero-section';
 import { useSuspenseSolution } from '@/lib/solution';
 import { useParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -25,7 +26,8 @@ const SolutionDetailContent = ({ solutionSeq }: { solutionSeq: number }) => {
 
   return (
     <div className="mx-auto px-20 py-12 w-full flex flex-col gap-16">
-      {/* TODO: 히어로 섹션 추가 예정 */}
+      {/* 히어로 섹션 */}
+      <SolutionHeroSection solution={solution} />
 
       {/* 서비스 플랜 섹션 */}
       {solution.plans && solution.plans.length > 0 && <ServicePlansSection solution={solution} />}

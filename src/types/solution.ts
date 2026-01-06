@@ -35,7 +35,7 @@ export interface IFilterConfig {
 // 솔루션 이미지
 export interface ISolutionImage {
   imageUrl: string;
-  imageType: string;
+  imageType: 'representation' | 'detail' | 'optional';
 }
 
 // 솔루션 플랜 상세

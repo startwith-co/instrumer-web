@@ -40,10 +40,50 @@ const PlansSectionSkeleton = () => {
   );
 };
 
+const HeroSectionSkeleton = () => {
+  return (
+    <section className="w-full">
+      <div className="flex flex-row gap-8">
+        {/* 이미지 캐러셀 스켈레톤 */}
+        <div className="flex-1 w-1/2">
+          <div className="relative w-full aspect-[4/3] rounded-[10px] bg-gray-300 animate-pulse" />
+        </div>
+
+        {/* 솔루션 정보 카드 스켈레톤 */}
+        <div className="flex-1 w-1/2">
+          <div className="flex h-full flex-col justify-between">
+            {/* 상단: 제목 + 설명 */}
+            <div className="flex flex-col gap-4">
+              {/* 제목 */}
+              <div className="h-8 w-48 bg-gray-300 rounded animate-pulse" />
+              {/* 설명 */}
+              <div className="flex flex-col gap-2">
+                <div className="h-4 w-full bg-gray-300 rounded animate-pulse" />
+                <div className="h-4 w-full bg-gray-300 rounded animate-pulse" />
+                <div className="h-4 w-3/4 bg-gray-300 rounded animate-pulse" />
+              </div>
+            </div>
+
+            {/* 하단: 가격 및 버튼 */}
+            <div className="flex flex-col gap-6">
+              <div className="h-10 w-56 bg-gray-300 rounded animate-pulse" />
+              <div className="w-full flex flex-row gap-3">
+                <div className="h-12 w-full bg-gray-300 rounded-full animate-pulse" />
+                <div className="h-12 w-full bg-gray-300 rounded-full animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 const SolutionDetailSkeleton = () => {
   return (
     <div className="mx-auto px-20 py-12 w-full flex flex-col gap-16">
-      {/* TODO: 히어로 섹션 스켈레톤 추가 예정 */}
+      {/* 히어로 섹션 스켈레톤 */}
+      <HeroSectionSkeleton />
 
       {/* 서비스 플랜 섹션 스켈레톤 */}
       <PlansSectionSkeleton />
