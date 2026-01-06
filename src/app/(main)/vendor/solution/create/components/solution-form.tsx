@@ -5,7 +5,7 @@ import SolutionKeywordForm from './solution-keyword-form';
 import SolutionPlanForm from './solution-plan-form';
 import { Button } from '@/components/ui/button';
 import { useCreateSolutionMutation } from '@/lib/solution';
-import { ICreateSolutionRequest, ISolutionImage, ISolutionPlan } from '@/types/solution';
+import { ICreateSolutionPlan, ICreateSolutionRequest, ISolutionImage } from '@/types/solution';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -17,7 +17,7 @@ export interface ISolutionFormData {
   thumbnailUrl: string;
   pdfUrl: string;
   additionalImages: string[];
-  plans: ISolutionPlan[];
+  plans: ICreateSolutionPlan[];
   keywords: string[];
 }
 

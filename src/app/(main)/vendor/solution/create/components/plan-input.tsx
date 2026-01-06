@@ -2,7 +2,7 @@
 
 import { Dropdown } from '@/components/ui/dropdown';
 import Input from '@/components/ui/input';
-import { ISolutionPlan } from '@/types/solution';
+import { ICreateSolutionPlan } from '@/types/solution';
 import { ChevronDown, Plus, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -15,8 +15,8 @@ const PRICE_TYPE_OPTIONS = [
 ];
 
 interface PlanInputProps {
-  plans: ISolutionPlan[];
-  onChange: (plans: ISolutionPlan[]) => void;
+  plans: ICreateSolutionPlan[];
+  onChange: (plans: ICreateSolutionPlan[]) => void;
   error?: string;
 }
 
@@ -34,7 +34,7 @@ const PlanInput = ({ plans, onChange, error }: PlanInputProps) => {
     if (plans.length >= MAX_PLANS) return;
     // 기존 플랜의 상세 기능명을 복사 (내용은 빈 값)
     const existingDetails = plans[0]?.details || [];
-    const newPlan: ISolutionPlan = {
+    const newPlan: ICreateSolutionPlan = {
       name: '',
       subName: '',
       price: 0,
@@ -54,7 +54,7 @@ const PlanInput = ({ plans, onChange, error }: PlanInputProps) => {
     setPriceTypes(updatedPriceTypes);
   };
 
-  const handlePlanChange = (index: number, field: keyof ISolutionPlan, value: string | number | null) => {
+  const handlePlanChange = (index: number, field: keyof ICreateSolutionPlan, value: string | number | null) => {
     const updatedPlans = [...plans];
     updatedPlans[index] = { ...updatedPlans[index], [field]: value };
     onChange(updatedPlans);

@@ -3,9 +3,9 @@
 import PlanInput from './plan-input';
 import { Controller, useFormContext } from 'react-hook-form';
 import { ISolutionFormData } from './solution-form';
-import { ISolutionPlan } from '@/types/solution';
+import { ICreateSolutionPlan } from '@/types/solution';
 
-const validatePlans = (plans: ISolutionPlan[]) => {
+const validatePlans = (plans: ICreateSolutionPlan[]) => {
   if (!plans || plans.length === 0) {
     return '최소 1개의 플랜을 입력해주세요.';
   }
