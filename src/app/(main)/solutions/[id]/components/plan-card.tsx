@@ -1,8 +1,10 @@
 'use client';
 
 import PlanFeatureTable from './plan-feature-table';
+import { useLoginModal } from '@/components/auth/login-modal';
 import { Button } from '@/components/ui/button';
 import { ISolutionPlan } from '@/types/solution';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 interface PlanCardProps {
@@ -13,14 +15,23 @@ interface PlanCardProps {
 
 const PlanCard = ({ solutionSeq, plan, vendorSeq }: PlanCardProps) => {
   const router = useRouter();
+  const { data: session } = useSession();
+  const { open: openLoginModal } = useLoginModal();
 
   const handlePurchase = () => {
+    if (!session) {
+      openLoginModal();
+      return;
+    }
     router.push(`/payment/${solutionSeq}?planId=${plan.planSeq}`);
   };
 
   const handlePriceInquiry = () => {
-    // TODO: 실제 채팅 경로 확인 필요
-    router.push(`/customer/chat?vendor=${vendorSeq}`);
+    if (!session) {
+      openLoginModal();
+      return;
+    }
+    router.push(`/customer/chat?vendorSeq=${vendorSeq}`);
   };
 
   const isPriceInquiry = plan.price === null;

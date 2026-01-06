@@ -48,3 +48,15 @@ export const useSuspenseUserInfo = () => {
     queryKey: ['/api/users'],
   });
 };
+
+// 특정 유저 정보 조회
+export const fetchUserInfoByUserSeq = async (userSeq: number): Promise<IUserResponse | null> => {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_DOMAIN || 'http://localhost:3000';
+    const response = await axios.get<IBaseResponse<IUserResponse>>(`${baseUrl}/api/public/${userSeq}`);
+    return response.data.data;
+  } catch (error) {
+    console.error('Failed to fetch user info:', error);
+    return null;
+  }
+};

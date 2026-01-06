@@ -1,29 +1,22 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { StreamChat, Channel } from 'stream-chat';
+import { createOrGetDMChannel, toStreamChatId } from '@/lib/stream-chat';
 import { useSession } from 'next-auth/react';
+import { useCallback, useEffect, useState } from 'react';
+import { Channel, StreamChat } from 'stream-chat';
 
 const API_KEY = process.env.NEXT_PUBLIC_STREAM_KEY;
-
-/**
- * 채널 ID 생성 (두 사용자 간 DM용)
- */
-export const getChannelId = (userId1: string, userId2: string): string => {
-  const members = [userId1, userId2].sort();
-  return `dm-${members.join('-')}`;
-};
 
 if (!API_KEY) {
   throw new Error('NEXT_PUBLIC_STREAM_KEY is not defined');
 }
 
 /** 토큰 발급 */
-const fetchToken = async (userId: string, userName: string): Promise<string> => {
+const fetchToken = async (userSeq: number, userName: string): Promise<string> => {
   const res = await fetch('/api/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ userId, userName }),
+    body: JSON.stringify({ userSeq, userName }),
   });
 
   if (!res.ok) {
@@ -38,11 +31,12 @@ const fetchToken = async (userId: string, userName: string): Promise<string> => 
 let connectingPromise: Promise<void> | null = null;
 
 /** Stream Chat 연결 */
-const connectChat = async (userId: string, userName: string) => {
+const connectChat = async (userSeq: number, userName: string) => {
   const client = StreamChat.getInstance(API_KEY);
+  const streamChatId = toStreamChatId(userSeq);
 
   // 같은 유저면 스킵
-  if (client.userID === userId) return;
+  if (client.userID === streamChatId) return;
 
   // 연결 진행 중이면 해당 Promise 대기
   if (connectingPromise) {
@@ -55,8 +49,8 @@ const connectChat = async (userId: string, userName: string) => {
       // 다른 유저로 연결된 상태면 먼저 끊기
       if (client.userID) await client.disconnectUser();
 
-      const token = await fetchToken(userId, userName);
-      await client.connectUser({ id: userId, name: userName }, token);
+      const token = await fetchToken(userSeq, userName);
+      await client.connectUser({ id: streamChatId, name: userName }, token);
     } finally {
       connectingPromise = null;
     }
@@ -80,19 +74,19 @@ const useChatClient = () => {
       return;
     }
 
-    const userId = session?.user?.id;
+    const userSeq = session?.user?.userSeq;
     const userName = session?.user?.name ?? '사용자';
 
-    if(!userId || !userName) {
+    if (!userSeq) {
       setError(new Error('사용자 정보가 없습니다.'));
       return;
-    } 
+    }
 
     setError(null);
 
     const connect = async () => {
       try {
-        await connectChat(userId, userName);
+        await connectChat(userSeq, userName);
         setIsReady(true);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('연결에 실패했습니다.'));
@@ -115,14 +109,24 @@ const useChatClient = () => {
     [client]
   );
 
-  /** 1:1 DM 채널 생성/조회 */
+  /** 1:1 DM 채널 생성/조회 (서버에서 userSeq로 사용자 조회 후 채널 생성) */
   const createOrGetChannel = useCallback(
-    async (userId1: string, userId2: string): Promise<Channel | null> => {
+    async (userSeq1: number, userSeq2: number): Promise<Channel | null> => {
       if (!client) return null;
-      const channelId = getChannelId(userId1, userId2);
-      const channel = client.channel('messaging', channelId, {
-        members: [userId1, userId2],
+
+      // 서버에서 userSeq로 사용자 정보 조회 후 채널 생성
+      const result = await createOrGetDMChannel({
+        userSeq1,
+        userSeq2,
       });
+
+      if (!result.success || !result.channelId) {
+        console.error('채널 생성 실패:', result.error);
+        return null;
+      }
+
+      // 생성된 채널 watch
+      const channel = client.channel('messaging', result.channelId);
       await channel.watch();
       return channel;
     },
