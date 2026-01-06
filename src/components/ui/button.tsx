@@ -14,6 +14,7 @@ const buttonVariants = cva(
         login: 'p-[10px] rounded-xl h-[255px] w-[300px] flex flex-col items-center justify-center text-center',
         outline:
           'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
+        white: 'bg-white text-[#7A7A7A] shadow-xs hover:bg-gray-50',
         secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
         ghost: 'bg-white hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 rounded-3xl shadow-sm',
         link: 'underline-offset-4 hover:underline',
@@ -54,7 +55,7 @@ function Button({
   ...props
 }: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
-    asChild: boolean | undefined;
+    asChild?: boolean;
   }) {
   const Comp = asChild ? Slot : 'button';
 

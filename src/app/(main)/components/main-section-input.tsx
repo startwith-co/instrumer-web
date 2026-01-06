@@ -18,17 +18,17 @@ const MainSectionInput = () => {
     <>
       <form
         onSubmit={handleSearch}
-        className="relative w-full max-w-[1000px] pl-10 pr-2 py-2 flex items-center rounded-full shadow-[0px_0px_10px_0px_#0000001A]"
+        className="relative w-full pl-6 pr-1.5 py-1.5 flex items-center rounded-full shadow-[0px_0px_10px_0px_#0000001A] bg-white"
       >
         <input
           ref={inputRef}
           type="search"
           placeholder="키워드를 검색해주세요."
-          className="w-full text-black placeholder:text-black focus:outline-none"
+          className="w-full bg-white text-black placeholder:text-[#7A7A7A] text-sm focus:outline-none"
         />
         <button
           type="submit"
-          className="flex size-10 items-center justify-center rounded-full bg-black p-1 text-center text-white"
+          className="flex size-8 items-center justify-center rounded-full bg-black p-1 text-center text-white"
         >
           →
         </button>

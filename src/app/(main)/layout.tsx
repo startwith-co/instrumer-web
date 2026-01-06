@@ -1,3 +1,4 @@
+import Footer from '@/components/layout/footer';
 import Header from '@/components/layout/header';
 
 interface ILayoutProps {
@@ -6,9 +7,10 @@ interface ILayoutProps {
 
 const Layout = ({ children }: ILayoutProps) => {
   return (
-    <div className="flex flex-col w-full relative">
+    <div className="flex flex-col w-full relative bg-[#F8F9FB]">
       <Header />
-      {children}
+      <main className="max-w-screen-xl min-h-[calc(100vh-60px)] mx-auto w-full">{children}</main>
+      <Footer />
     </div>
   );
 };

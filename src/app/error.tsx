@@ -13,7 +13,7 @@ const Error = ({ error }: IErrorProps) => {
   }, [error]);
 
   return (
-    <div className="flex size-full min-h-[calc(100vh-57px-24px)] items-center justify-center">
+    <div className="flex size-full min-h-[calc(100vh-60px)] items-center justify-center">
       <div className="flex flex-col gap-y-6">
         <div className="flex flex-col items-center text-ui-fg-subtle gap-y-3">
           <div className="flex flex-col items-center justify-center gap-y-1">

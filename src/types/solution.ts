@@ -1,4 +1,6 @@
-// ============ Union Types ============
+import { IPageInfo } from './pageable';
+
+// ============ Union Types (UI용) ============
 
 export type Budget =
   | '전체'
@@ -20,7 +22,7 @@ export type Category =
   | 'PAYMENT_SUBSCRIPTION'
   | 'CONTENT_CREATION_DESIGN';
 
-export type FilterKey = 'category' | 'budget';
+export type FilterKey = 'category' | 'minPrice' | 'maxPrice';
 
 export interface IFilterConfig {
   paramName: string;
@@ -28,67 +30,100 @@ export interface IFilterConfig {
   defaultValue?: string;
 }
 
-export type Direction = 'INCREASE' | 'DECREASE';
+// ============ Common Types ============
 
-export const getDirectionLabel = (direction: Direction): string => {
-  return direction === 'INCREASE' ? '증가' : '감소';
-};
-
-// ============ Interfaces ============
-
-export interface ISolutionEffect {
-  effectName: string;
-  percent: number;
-  direction: Direction;
+// 솔루션 이미지
+export interface ISolutionImage {
+  imageUrl: string;
+  imageType: 'representation' | 'detail' | 'optional';
 }
 
-export interface ISolution {
-  solutionSeq: number;
-  representImageUrl: string;
-  descriptionPdfUrl: string;
-  solutionName: string;
-  solutionDetail: string;
-  amount: number;
-  solutionImplementationType: string[];
-  duration: number;
-  recommendedCompanySize: string[];
-  solutionEffect: ISolutionEffect[];
-  keywords: string[];
+// 솔루션 플랜 상세
+export interface ISolutionPlanDetail {
+  name: string;
+  context: string;
 }
 
-export interface ISolutionListItem {
-  solutionSeq: number;
-  solutionName: string;
-  amount: number;
-  representImageUrl: string;
-  category: Category;
-  vendorSeq: number;
-  vendorName: string;
-  averageStar: number;
-  countSolutionReview: number;
+// 솔루션 플랜
+export interface ISolutionPlan {
+  planSeq: number;
+  name: string;
+  subName?: string;
+  price: number | null; // null = 가격 문의
+  planType: string;
+  details?: ISolutionPlanDetail[];
 }
 
 // ============ Request Types ============
 
-export interface ISaveSolutionRequest {
-  vendorSeq: number;
-  solutionName: string;
-  solutionDetail: string;
+// 솔루션 생성 요청
+export interface ICreateSolutionRequest extends Record<string, unknown> {
+  name: string;
+  explanation: string;
   category: string;
-  recommendedCompanySize: string;
-  solutionImplementationType: string;
-  amount: number;
-  duration: number;
-  solutionEffect: ISolutionEffect[];
-  keyword: string[];
+  price: number;
+  images?: ISolutionImage[];
+  plans?: ISolutionPlan[];
+  keywords?: string[];
 }
 
-export interface IModifySolutionRequest extends ISaveSolutionRequest {
+// 솔루션 수정 요청
+export interface IUpdateSolutionRequest extends Record<string, unknown> {
   solutionSeq: number;
+  name: string;
+  explanation: string;
+  category: string;
+  price: number;
+  images?: ISolutionImage[];
+  plans?: ISolutionPlan[];
+  keywords?: string[];
+}
+
+// 솔루션 목록 조회 파라미터
+export interface ISolutionListParams {
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  page?: number;
+  size?: number;
 }
 
 // ============ Response Types ============
 
-export interface ISaveSolutionResponse {
+// 솔루션 생성 응답
+export interface ICreateSolutionResponse {
   solutionSeq: number;
+}
+
+// 솔루션 상세 조회 응답
+export interface IGetSolutionResponse {
+  solutionSeq: number;
+  name: string;
+  explanation: string;
+  category: string;
+  price: number;
+  images?: ISolutionImage[];
+  plans?: ISolutionPlan[];
+  reviewCnt: number;
+  reviewAverage: number;
+  vendorSeq: number;
+  vendorBusinessName: string;
+  profileImageUrl?: string;
+}
+
+// 솔루션 목록 아이템
+export interface IGetSolutionListItem {
+  solutionSeq: number;
+  image?: string;
+  name: string;
+  price: number;
+  cnt: number;
+  average: number;
+  businessName: string;
+}
+
+// 솔루션 목록 조회 응답
+export interface IGetSolutionListResponse {
+  content: IGetSolutionListItem[];
+  page: IPageInfo;
 }

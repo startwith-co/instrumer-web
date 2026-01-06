@@ -49,6 +49,7 @@
     "sharp": "^0.33.5",
     "stream-chat": "^9.27.1",
     "stream-chat-react": "^13.13.0",
+    "swiper": "^11.2.10",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7"
   },

@@ -1,13 +1,11 @@
 import HomeSolutionSection from './components/home-solution-section';
 import MainSection from './components/main-section';
-import Footer from '@/components/layout/footer';
 
 const Home = () => {
   return (
-    <main className="flex w-full flex-col gap-80 items-center">
+    <main className="flex w-full flex-col gap-60 items-center mb-60">
       <MainSection />
       <HomeSolutionSection />
-      <Footer />
     </main>
   );
 };

@@ -1,12 +1,15 @@
-// Definition of the json-server's pageable response
-export interface IPageable<T> {
-  total: number;
+// 페이지 정보
+export interface IPageInfo {
   page: number;
-  content: T[];
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
+// 페이지네이션 파라미터
 export interface IPageableParams {
   page?: number;
   size?: number;
-  sort?: string;
 }

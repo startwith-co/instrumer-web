@@ -32,6 +32,14 @@ export const useSolutionFilter = () => {
     setPendingFilters((prev) => ({ ...prev, [key]: value ? [value] : [] }));
   }, []);
 
+  const setBudgetFilter = useCallback((minPrice?: number, maxPrice?: number) => {
+    setPendingFilters((prev) => ({
+      ...prev,
+      minPrice: minPrice !== undefined ? [minPrice.toString()] : [],
+      maxPrice: maxPrice !== undefined ? [maxPrice.toString()] : [],
+    }));
+  }, []);
+
   const toggleFilter = useCallback((key: FilterKey, value: string) => {
     setPendingFilters((prev) => {
       const current = prev[key] || [];
@@ -60,21 +68,25 @@ export const useSolutionFilter = () => {
   }, [router, pathname, searchParams, pendingFilters]);
 
   const removeFilter = useCallback(
-    (key: FilterKey, value?: string) => {
+    (keys: FilterKey | FilterKey[], value?: string) => {
       const params = new URLSearchParams(searchParams.toString());
-      const config = FILTER_CONFIG[key];
       params.delete('page');
 
-      if (config.multiple && value) {
-        const newValues = (appliedFilters[key] || []).filter((v) => v !== value);
-        if (newValues.length > 0) {
-          params.set(config.paramName, newValues.join(','));
+      const keyArray = Array.isArray(keys) ? keys : [keys];
+
+      keyArray.forEach((key) => {
+        const config = FILTER_CONFIG[key];
+        if (config.multiple && value) {
+          const newValues = (appliedFilters[key] || []).filter((v) => v !== value);
+          if (newValues.length > 0) {
+            params.set(config.paramName, newValues.join(','));
+          } else {
+            params.delete(config.paramName);
+          }
         } else {
           params.delete(config.paramName);
         }
-      } else {
-        params.delete(config.paramName);
-      }
+      });
 
       router.push(params.toString() ? `${pathname}?${params}` : pathname);
     },
@@ -94,6 +106,7 @@ export const useSolutionFilter = () => {
     pendingFilters,
     appliedFilters,
     setFilter,
+    setBudgetFilter,
     toggleFilter,
     applyFilters,
     removeFilter,

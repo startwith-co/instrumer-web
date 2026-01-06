@@ -6,6 +6,11 @@ export const getOnlyNumber = (number: string) => {
   return number.replace(/[^0-9]/g, '');
 };
 
+export const formatNumberWithCommas = (value: string) => {
+  const number = value.replace(/[^0-9]/g, '');
+  return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getClearObject = (target: any) => {
   const filteredObject = Object.keys(target).reduce((acc, key) => {

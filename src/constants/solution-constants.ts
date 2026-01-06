@@ -1,13 +1,13 @@
 import { Budget, Category, FilterKey, IFilterConfig } from '@/types';
 
-export const BUDGET_OPTIONS: { value: Budget; label: string }[] = [
+export const BUDGET_OPTIONS: { value: Budget; label: string; minPrice?: number; maxPrice?: number }[] = [
   { value: '전체', label: '전체' },
-  { value: '500,000원 미만', label: '500,000원 미만' },
-  { value: '500,000원~1,000,000원 미만', label: '500,000원~1,000,000원 미만' },
-  { value: '1,000,000원~3,000,000원 미만', label: '1,000,000원~3,000,000원 미만' },
-  { value: '3,000,000원~5,000,000원 미만', label: '3,000,000원~5,000,000원 미만' },
-  { value: '5,000,000원~10,000,000원 미만', label: '5,000,000원~10,000,000원 미만' },
-  { value: '10,000,000원 이상', label: '10,000,000원 이상' },
+  { value: '500,000원 미만', label: '500,000원 미만', maxPrice: 500000 },
+  { value: '500,000원~1,000,000원 미만', label: '500,000원~1,000,000원 미만', minPrice: 500000, maxPrice: 1000000 },
+  { value: '1,000,000원~3,000,000원 미만', label: '1,000,000원~3,000,000원 미만', minPrice: 1000000, maxPrice: 3000000 },
+  { value: '3,000,000원~5,000,000원 미만', label: '3,000,000원~5,000,000원 미만', minPrice: 3000000, maxPrice: 5000000 },
+  { value: '5,000,000원~10,000,000원 미만', label: '5,000,000원~10,000,000원 미만', minPrice: 5000000, maxPrice: 10000000 },
+  { value: '10,000,000원 이상', label: '10,000,000원 이상', minPrice: 10000000 },
 ];
 
 export const CATEGORY_OPTIONS: { value: Category; label: string; image?: string }[] = [
@@ -60,5 +60,6 @@ export const CATEGORY_OPTIONS: { value: Category; label: string; image?: string 
 
 export const FILTER_CONFIG: Record<FilterKey, IFilterConfig> = {
   category: { paramName: 'category', multiple: false },
-  budget: { paramName: 'budget', multiple: false, defaultValue: '전체' },
+  minPrice: { paramName: 'minPrice', multiple: false },
+  maxPrice: { paramName: 'maxPrice', multiple: false },
 };

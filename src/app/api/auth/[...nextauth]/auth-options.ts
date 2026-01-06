@@ -1,3 +1,7 @@
+import { login, tokenRefresh } from '@/lib/auth';
+import { fetchUserInfo } from '@/lib/user';
+import { IJwtPayload } from '@/types/auth';
+import dayjs from 'dayjs';
 import { jwtDecode } from 'jwt-decode';
 import { NextAuthOptions, User } from 'next-auth';
 import CredentialsProvider, { CredentialsConfig } from 'next-auth/providers/credentials';
@@ -7,38 +11,37 @@ const credentialsProviderOption: CredentialsConfig = {
   id: 'login-credentials',
   name: 'login-credentials',
   credentials: {
-    login: { label: 'Email', type: 'text' },
+    email: { label: 'Email', type: 'text' },
     password: { label: 'Password', type: 'password' },
   },
   async authorize(credentials: Record<string, unknown> | undefined) {
     try {
-      // const user = await login({
-      //   login: credentials?.login as string,
-      //   password: credentials?.password as string,
-      // });
+      const response = await login({
+        email: credentials?.email as string,
+        password: credentials?.password as string,
+      });
 
-      // 테스트용 임의 ID 로그인 (password가 'test'인 경우)
-      if (credentials?.password === 'test' && credentials?.login) {
+      if (response) {
+        // 로그인 성공 후 유저 정보 조회하여 name 설정
+        const userInfo = await fetchUserInfo(response.accessToken);
+        const userName = userInfo?.businessName || userInfo?.managerName || (credentials?.email as string);
+
         return {
-          id: credentials.login as string,
-          name: credentials.login as string,
-          role: 'customer',
-          accessToken: '',
-          refreshToken: '',
+          id: credentials?.email as string,
+          name: userName,
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
         };
       }
 
       return null;
     } catch (error) {
-      console.error(error);
-      throw error;
+      console.error('Login failed:', error);
+      return null;
     }
   },
 };
 export const authOptions: NextAuthOptions = {
-  pages: {
-    signIn: '/login',
-  },
   secret: process.env.NEXTAUTH_SECRET,
   providers: [CredentialsProvider(credentialsProviderOption)],
   callbacks: {
@@ -54,37 +57,69 @@ export const authOptions: NextAuthOptions = {
 
       // [1] 최초 로그인 시
       if (account && user) {
-        // 테스트용 빈 토큰인 경우 jwtDecode 스킵
         const accessToken = user.accessToken as string;
         let exp: number | undefined;
+        let userType: IJwtPayload['userType'] | undefined;
+        let userSeq: number | undefined;
 
         if (accessToken) {
           try {
-            exp = jwtDecode(accessToken).exp as number;
+            const decoded = jwtDecode<IJwtPayload>(accessToken);
+            exp = decoded.exp;
+            userType = decoded.userType;
+            userSeq = decoded.userSeq;
           } catch {
             // 유효하지 않은 JWT인 경우 무시
           }
         }
 
         return {
-          user,
+          user: { ...user, userType, userSeq },
           accessToken,
           refreshToken: user.refreshToken,
           exp,
         };
       }
 
-      // // [2] 로그인 이후 토큰 만료 전
-      // if (dayjs().isBefore(dayjs((token.exp as number) * 1000))) {
-      //   return token;
-      // }
+      // [2] 로그인 이후 토큰 만료 전
+      if (token.exp && dayjs().isBefore(dayjs((token.exp as number) * 1000))) {
+        return token;
+      }
 
-      // // [3] 로그인 이후 토큰 만료 후
-      // const { accessToken, refreshToken } = await tokenRefresh(token.refreshToken as string);
+      // [3] 로그인 이후 토큰 만료 후 - 리프레시
+      if (token.refreshToken) {
+        try {
+          const { accessToken, refreshToken } = await tokenRefresh(token.refreshToken as string);
+          const decoded = jwtDecode<IJwtPayload>(accessToken);
 
-      // token.accessToken = accessToken;
-      // token.refreshToken = refreshToken;
-      // token.exp = jwtDecode(accessToken).exp as number;
+          return {
+            ...token,
+            user: {
+              ...(token.user as User),
+              userType: decoded.userType,
+              userSeq: decoded.userSeq,
+            },
+            accessToken,
+            refreshToken,
+            exp: decoded.exp,
+          };
+        } catch (error) {
+          console.error('Token refresh failed:', error);
+          // 리프레시 실패 시 토큰 무효화
+          return {
+            ...token,
+            user: {
+              ...(token.user as User),
+              accessToken: null,
+              refreshToken: null,
+            },
+            accessToken: null,
+            refreshToken: null,
+            exp: null,
+            error: 'RefreshTokenError',
+          };
+        }
+      }
 
       return token;
     },
@@ -92,6 +127,9 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token.user) {
         session.user = token.user as User;
+      }
+      if (token.error) {
+        session.error = token.error as string;
       }
       return session;
     },

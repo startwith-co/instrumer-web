@@ -7,13 +7,21 @@ import { usePagination } from '@/hooks/use-pagination';
 import { useSearchParams } from '@/hooks/use-search-params';
 import { useSolutions } from '@/lib/solution';
 
+const PAGE_SIZE = 20;
+
 const SolutionList = () => {
   const { searchParams } = useSearchParams();
-  const { currentPage, start, end, setPage } = usePagination({ pageSize: 20 });
+  const { currentPage, setPage } = usePagination({ pageSize: PAGE_SIZE });
 
-  const { data, isLoading } = useSolutions({ start, end, ...searchParams });
-  const solutions = data?.data ?? [];
-  const totalPages = 5; // TODO: API에서 total count 받아서 계산
+  const { data, isLoading } = useSolutions({
+    page: currentPage - 1,
+    size: PAGE_SIZE,
+    category: searchParams.category as string | undefined,
+    minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
+    maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
+  });
+  const solutions = data?.data?.content ?? [];
+  const totalPages = data?.data?.page?.totalPages ?? 1;
 
   if (isLoading) {
     return <SolutionListSkeleton />;
@@ -21,8 +29,8 @@ const SolutionList = () => {
 
   return (
     <div className="w-full">
-      <p className="mb-4 font-semibold">
-        <span className="text-primary">{solutions.length}</span>개의 솔루션
+      <p className="mb-4 font-semibold text-sm">
+        <span className="text-primary">{data?.data?.page?.totalElements ?? 0}</span>개의 솔루션
       </p>
       <div className="grid grid-cols-4 gap-6">
         {solutions.map((solution) => (

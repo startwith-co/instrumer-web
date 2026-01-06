@@ -40,7 +40,7 @@ const FilterPillGroup = <T extends string>({
           type="button"
           onClick={() => handleClick(value)}
           className={cn(
-            'rounded-[7px] border px-4 py-3 text-base transition-colors',
+            'rounded-[7px] border px-4 py-2.5 text-xs transition-colors',
             isSelected(value) ? 'border-primary bg-primary text-white' : 'bg-[#F1F1F1] text-gray-900'
           )}
         >

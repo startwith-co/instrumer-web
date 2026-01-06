@@ -1,3249 +1,322 @@
 {
   "openapi": "3.0.1",
-  "info": {
-    "title": "StartWith",
-    "description": "1. 프론트에서 분기 잡을 수 있게 CUSTOM CODE 값을 같이 반환합니다.\n2. EXCEPTION 시 **httpStatus, message, code**의 형식이 아닌 **다른 형식**으로 날라갈 경우 *담당자*에게 말씀해주세요.\n3. CODE 값에 **\"UNAUTHORIZED_EXCEPTION_예외코드 설정하세요.\"**가 반환될 경우 *담당자*에게 말씀해주세요.\n4. 필요한 API 혹은 데이터가 있을 경우 말씀해주세요.\n5. 각각의 API Description에 빠져있는 EXCEPTION이 있을 경우 말씀해주세요.\n6. CATEGORY: DEFECT_INSPECTION, PREDICTIVE_MAINTENANCE, PROCESS_MONITORING, MES_INVENTORY_MANAGEMENT\n7. DIRECTION: INCREASE, DECREASE\n8. 중복 가능한 데이터의 경우 ','로 이어서 String으로 보내주세요. EX) 소기업,중기업,중견기업\n9. 광클 방지를 위한 disable 처리해주세요.\n",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://15.164.140.112:8080"
-    }
-  ],
-  "security": [
-    {
-      "JWT": []
-    }
-  ],
-  "tags": [
-    {
-      "name": "솔루션 리뷰",
-      "description": "담당자(박종훈)"
-    },
-    {
-      "name": "솔루션",
-      "description": "담당자(박종훈)"
-    },
-    {
-      "name": "벤더 기업",
-      "description": "담당자(송인준)"
-    },
-    {
-      "name": "결제 요청",
-      "description": "담당자(박종훈)"
-    },
-    {
-      "name": "수요 기업",
-      "description": "담당자(송인준)"
-    },
-    {
-      "name": "대시 보드",
-      "description": "담당자(박종훈)"
-    },
-    {
-      "name": "통계 자료",
-      "description": "담당자(박종훈)"
-    },
-    {
-      "name": "채팅 파일",
-      "description": "담당자(박종훈)"
-    },
-    {
-      "name": "토스페이먼츠 PG사",
-      "description": "담당자(박종훈)"
-    },
-    {
-      "name": "주요 기업 고객",
-      "description": "담당자(박종훈)"
-    }
-  ],
+  "info": { "title": "INSTRUMERS API", "version": "1.0.0" },
+  "servers": [{ "url": "https://api.instrumer.com" }],
+  "security": [{ "JWT": [] }],
   "paths": {
-    "/api/solution-service/solution": {
-      "get": {
-        "tags": ["솔루션"],
-        "summary": "솔루션 조회 API",
-        "operationId": "getSolutionEntity",
-        "parameters": [
-          {
-            "name": "solutionSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseGetSolutionEntityResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_005": {
-            "description": "존재하지 않는 솔루션입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/api/vendor/solutions": {
       "put": {
-        "tags": ["솔루션"],
-        "summary": "솔루션 수정 API",
-        "description": "1. amount는 0보다 작을 수 없습니다.\n",
-        "operationId": "modifySolutionEntity",
+        "tags": ["솔루션 API (Vendor)"],
+        "summary": "솔루션 수정",
+        "operationId": "updateSolution",
         "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": ["request"],
-                "type": "object",
-                "properties": {
-                  "representImageUrl": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "descriptionPdfUrl": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "request": {
-                    "$ref": "#/components/schemas/ModifySolutionEntityRequest"
-                  }
-                }
-              }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UpdateSolutionRequest" } } },
+          "required": true
         },
         "responses": {
-          "CONFLICT_EXCEPTION_007": {
-            "description": "이미 존재하는 카테고리입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_002": {
-            "description": "동시성 저장은 불가능합니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_002": {
-            "description": "S3 UPLOAD 실패",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_017": {
-            "description": "금액은 정수만 입력 가능합니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_005": {
-            "description": "존재하지 않는 솔루션입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_016": {
-            "description": "솔루션 금액이 천만원을 넘으면 안됩니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseCreateSolutionResponse" } } }
           }
         }
       },
       "post": {
-        "tags": ["솔루션"],
-        "summary": "솔루션 생성 API",
-        "description": "1. amount는 0보다 작을 수 없습니다.\n",
-        "operationId": "saveSolutionEntity",
+        "tags": ["솔루션 API (Vendor)"],
+        "summary": "솔루션 생성",
+        "operationId": "createSolution",
         "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": ["request"],
-                "type": "object",
-                "properties": {
-                  "representImageUrl": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "descriptionPdfUrl": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "request": {
-                    "$ref": "#/components/schemas/SaveSolutionEntityRequest"
-                  }
-                }
-              }
-            }
-          }
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateSolutionRequest" } } },
+          "required": true
         },
         "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_002": {
-            "description": "동시성 저장은 불가능합니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_002": {
-            "description": "S3 UPLOAD 실패",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_004": {
-            "description": "해당 벤더의 해당 카테고리 솔루션이 이미 존재합니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_017": {
-            "description": "금액은 정수만 입력 가능합니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseSaveSolutionEntityResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_016": {
-            "description": "솔루션 금액이 천만원을 넘으면 안됩니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseCreateSolutionResponse" } } }
           }
         }
       },
       "delete": {
-        "tags": ["솔루션"],
-        "summary": "솔루션 삭제 API",
-        "operationId": "deleteSolutionEntity",
+        "tags": ["솔루션 API (Vendor)"],
+        "summary": "솔루션 삭제",
+        "operationId": "deleteSolution",
         "parameters": [
-          {
-            "name": "solutionSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
+          { "name": "solutionSeq", "in": "query", "required": true, "schema": { "type": "integer", "format": "int64" } }
         ],
         "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_008": {
-            "description": "해당 기업이 작성한 카테고리 솔루션이 존재하지 않습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseString" } } }
           }
         }
       }
     },
-    "/api/solution-service/review": {
+    "/api/users": {
       "get": {
-        "tags": ["솔루션 리뷰"],
-        "summary": "솔루션별 리뷰 조회 API",
-        "operationId": "getAllSolutionReviewEntity",
-        "parameters": [
-          {
-            "name": "solutionSeq",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
+        "tags": ["회원 권한 필요"],
+        "summary": "사용자(본인) 정보 조회",
+        "description": "로그인한 사용자의 정보를 조회합니다.\n\nuserType에 따라 응답 구조가 달라집니다.\n\nVENDOR 응답 예시\n```json\n{\n  \"userSeq\": 1,\n  \"email\": \"vendor@example.com\",\n  \"userType\": \"VENDOR\",\n  \"profileImageUrl\": \"https://cdn.example.com/profile.png\",\n  \"businessName\": \"인스트루머스\",\n  \"managerName\": \"김대표\",\n  \"phone\": \"010-1234-5678\",\n  \"bank\": \"KB국민은행\",\n  \"account\": \"123456-01-123456\"\n}\n```\n\nCONSUMER 응답 예시\n```json\n{\n  \"userSeq\": 2,\n  \"email\": \"consumer@example.com\",\n  \"userType\": \"CONSUMER\",\n  \"profileImageUrl\": \"https://cdn.example.com/profile.png\",\n  \"businessName\": \"테스트컴퍼니\",\n  \"managerName\": \"이담당\",\n  \"phone\": \"010-9876-5432\"\n}\n```\n",
+        "operationId": "get",
         "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseListGetAllSolutionReviewResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_005": {
-            "description": "존재하지 않는 솔루션입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseObject" } } }
           }
         }
       },
       "put": {
-        "tags": ["솔루션 리뷰"],
-        "summary": "솔루션 리뷰 수정 API",
-        "operationId": "modifySolutionReviewEntity",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ModifySolutionReviewRequest"
-              }
-            }
-          },
-          "required": true
-        },
+        "tags": ["회원 권한 필요"],
+        "summary": "사용자 정보 수정",
+        "description": "로그인한 사용자의 정보를 수정합니다.\n\nuserType에 따라 요청 구조가 달라집니다.\n\n모든 필드는 선택적이며, 전달된 필드만 업데이트됩니다.\n\nVENDOR 요청 예시\n```json\n{\n  \"email\": \"vendor@example.com\",\n  \"password\": \"newPassword123\",\n  \"profileImageUrl\": \"https://cdn.example.com/profile.png\",\n  \"businessName\": \"인스트루머스\",\n  \"phone\": \"010-1234-5678\",\n  \"bank\": \"KB국민은행\",\n  \"account\": \"123456-01-123456\"\n}\n```\n\nCONSUMER 요청 예시\n```json\n{\n  \"email\": \"consumer@example.com\",\n  \"password\": \"newPassword123\",\n  \"profileImageUrl\": \"https://cdn.example.com/profile.png\",\n  \"businessName\": \"테스트컴퍼니\",\n  \"phone\": \"010-9876-5432\"\n}\n```\n",
+        "operationId": "update",
+        "requestBody": { "content": { "application/json": { "schema": { "type": "object" } } }, "required": true },
         "responses": {
-          "NOT_FOUND_EXCEPTION_007": {
-            "description": "수요 기업이 해당 솔루션에 작성한 리뷰가 없습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_002": {
-            "description": "동시성 저장은 불가능합니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_005": {
-            "description": "존재하지 않는 솔루션입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseString" } } }
           }
         }
       },
+      "delete": {
+        "tags": ["회원 권한 필요"],
+        "summary": "사용자 삭제",
+        "operationId": "delete",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseString" } } }
+          }
+        }
+      }
+    },
+    "/api/public/reissue-token": {
       "post": {
-        "tags": ["솔루션 리뷰"],
-        "summary": "솔루션 리뷰 생성 API",
-        "operationId": "saveSolutionReviewEntity",
+        "tags": ["회원 권한 불필요"],
+        "summary": "토큰 재발급",
+        "operationId": "reissueToken",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ReissueTokenRequest" } } },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseReIssueTokenResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/public/register/vendor": {
+      "post": {
+        "tags": ["회원 권한 불필요"],
+        "summary": "벤더 기업 회원가입",
+        "operationId": "registerVendor",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RegisterVendorRequest" } } },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseString" } } }
+          }
+        }
+      }
+    },
+    "/api/public/register/consumer": {
+      "post": {
+        "tags": ["회원 권한 불필요"],
+        "summary": "수요 고객 회원가입",
+        "operationId": "registerConsumer",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RegisterConsumerRequest" } } },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseString" } } }
+          }
+        }
+      }
+    },
+    "/api/public/presigned-url": {
+      "post": {
+        "tags": ["공통 API"],
+        "summary": "업로드용 S3 Presigned URL 생성",
+        "operationId": "presignedURL",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PresignedURLRequest" } } },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponsePresignedURLResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/public/login": {
+      "post": {
+        "tags": ["회원 권한 불필요"],
+        "summary": "회원 로그인",
+        "operationId": "register",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/LoginUserRequest" } } },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseLoginUserResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/public/auth-code": {
+      "post": {
+        "tags": ["회원 권한 불필요"],
+        "summary": "이메일 인증 번호 확인",
+        "operationId": "verifyAuthKey",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VerifyEmailAuthKeyRequest" } } },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseString" } } }
+          }
+        }
+      }
+    },
+    "/api/consumer/solutions/{solutionSeq}/reviews": {
+      "post": {
+        "tags": ["솔루션 리뷰 API (Consumer)"],
+        "summary": "솔루션 리뷰 작성",
+        "operationId": "createReview",
+        "parameters": [
+          { "name": "solutionSeq", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
         "requestBody": {
           "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SaveSolutionReviewRequest"
-              }
-            }
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateSolutionReviewRequest" } }
           },
           "required": true
         },
         "responses": {
-          "CONFLICT_EXCEPTION_002": {
-            "description": "동시성 저장은 불가능합니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_005": {
-            "description": "같은 솔루션에 리뷰는 한 번만 작성할 수 있습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
+            "description": "OK",
             "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseSaveSolutionReviewResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_005": {
-            "description": "존재하지 않는 솔루션입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
+              "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseCreateSolutionReviewResponse" } }
             }
           }
         }
       }
     },
-    "/api/b2b-service/vendor": {
+    "/api/public/{userSeq}": {
       "get": {
-        "tags": ["벤더 기업"],
-        "summary": "벤더 기업 조회 API",
-        "description": "벤더 기업 조회 API",
-        "operationId": "getVendorInfo",
+        "tags": ["회원 권한 불필요"],
+        "summary": "특정 사용자 정보 조회",
+        "description": "특정 사용자의 정보를 조회합니다.\n\nuserType에 따라 응답 구조가 달라집니다.\n\nVENDOR 응답 예시\n```json\n{\n  \"userSeq\": 1,\n  \"email\": \"vendor@example.com\",\n  \"userType\": \"VENDOR\",\n  \"profileImageUrl\": \"https://cdn.example.com/profile.png\",\n  \"businessName\": \"인스트루머스\",\n  \"managerName\": \"김대표\",\n  \"phone\": \"010-1234-5678\",\n  \"bank\": \"KB국민은행\",\n  \"account\": \"123456-01-123456\"\n}\n```\n\nCONSUMER 응답 예시\n```json\n{\n  \"userSeq\": 2,\n  \"email\": \"consumer@example.com\",\n  \"userType\": \"CONSUMER\",\n  \"profileImageUrl\": \"https://cdn.example.com/profile.png\",\n  \"businessName\": \"테스트컴퍼니\",\n  \"managerName\": \"이담당\",\n  \"phone\": \"010-9876-5432\"\n}\n```\n",
+        "operationId": "get_1",
         "parameters": [
+          { "name": "userSeq", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseObject" } } }
+          }
+        }
+      }
+    },
+    "/api/public/solutions/{solutionSeq}": {
+      "get": {
+        "tags": ["솔루션 API (Public)"],
+        "summary": "솔루션 상세 조회",
+        "operationId": "getSolution",
+        "parameters": [
+          { "name": "solutionSeq", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseGetSolutionResponse" } } }
+          }
+        }
+      }
+    },
+    "/api/public/solutions/{solutionSeq}/reviews": {
+      "get": {
+        "tags": ["솔루션 API (Public)"],
+        "summary": "솔루션 리뷰 목록 조회 (페이징)",
+        "operationId": "getReviews",
+        "parameters": [
+          { "name": "solutionSeq", "in": "path", "required": true, "schema": { "type": "integer", "format": "int64" } },
           {
-            "name": "vendorSeq",
+            "name": "page",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 10 }
           }
         ],
         "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
+            "description": "OK",
             "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseGetVendorInfo"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["벤더 기업"],
-        "summary": "Vendor Update API",
-        "description": "Vendor Update API",
-        "operationId": "updateVendor",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": ["request"],
-                "type": "object",
-                "properties": {
-                  "request": {
-                    "$ref": "#/components/schemas/UpdateVendorInfoRequest"
-                  },
-                  "vendorBannerImageUrl": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "profileImage": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "clientInfos": {
-                    "type": "array",
-                    "items": {
-                      "type": "string",
-                      "format": "binary"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
+              "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseGetSolutionReviewPageResponse" } }
             }
           }
         }
       }
     },
-    "/api/b2b-service/consumer": {
+    "/api/public/solutions/list": {
       "get": {
-        "tags": ["수요 기업"],
-        "summary": "수요 기업 조회 API",
-        "description": "수요 기업 조회 API",
-        "operationId": "getConsumerInfo",
+        "tags": ["솔루션 API (Public)"],
+        "summary": "솔루션 리스트 조회",
+        "operationId": "getSolutionList",
         "parameters": [
+          { "name": "category", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "minPrice", "in": "query", "required": false, "schema": { "type": "integer", "format": "int64" } },
+          { "name": "maxPrice", "in": "query", "required": false, "schema": { "type": "integer", "format": "int64" } },
           {
-            "name": "consumerSeq",
+            "name": "page",
             "in": "query",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 0 }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "format": "int32", "default": 10 }
           }
         ],
         "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseGetConsumerInfo"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": ["수요 기업"],
-        "summary": "Consumer Update API",
-        "description": "Consumer Update API",
-        "operationId": "updateConsumer",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "required": ["consumerImageUrl", "request"],
-                "type": "object",
-                "properties": {
-                  "request": {
-                    "$ref": "#/components/schemas/UpdateConsumerInfoRequest"
-                  },
-                  "consumerImageUrl": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseGetSolutionListResponse" } } }
           }
         }
       }
     },
-    "/api/payment-service/payment": {
-      "post": {
-        "tags": ["토스페이먼츠 PG사"],
-        "summary": "토스페이먼츠 PG사 결제 승인 API (가상계좌, 카드 결제)",
-        "description": "1. 광클 방지를 위한 disable 처리해주세요.\n2. amount의 경우 부가세 포함한 가격을 보내야합니다.\n3. paymentKey의 경우 SuccessURL 에서 받은 값, orderId의 경우 UUID 값을 생성해서 넘겨주셔야합니다.\n4. SERVER - TOSS 사이 간 orderId로 멱등성 처리가 돼 있습니다. 때문에 이전 결제 요청에서 결제 실패가 발생했을 경우 새로운 orderId 값을 만들어주셔야합니다.\n5. 결제 상태 변경은 웹훅으로만 처리됩니다. (모든 결제 수단: PAYMENT_STATUS_CHANGED, 취소: CANCEL_STATUS_CHANGED)\n6. 넘어가는 method 값에 따라 Response가 다릅니다.\n    - \"카드\": TossCardPaymentApprovalResponse\n    - \"가상계좌\": TossVirtualAccountPaymentResponse\n    - \"간편결제\": TossEasyPayPaymentApprovalResponse\n7. 가상계좌 개발자 센터: https://docs.tosspayments.com/guides/v2/payment-window/integration-virtual-account\n8. 카드 결제 개발자 센터: https://docs.tosspayments.com/guides/v2/payment-window/integration\n9. 웹훅 이벤트: https://docs.tosspayments.com/reference/using-api/webhook-events#payment_status_changed\n",
-        "operationId": "tossPaymentApproval",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TossPaymentApprovalRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "SERVER_EXCEPTION_003": {
-            "description": "결제 응답 파싱 중 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_009": {
-            "description": "지원하지 않는 결제 수단입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/TossCardPaymentApprovalResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/TossVirtualAccountPaymentResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/TossEasyPayPaymentApprovalResponse"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_003": {
-            "description": "결제 금액이 TOSS PAYMENT 승인 금액과 다릅니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_008": {
-            "description": "해당 결제 요청은 승인할 수 없습니다. 결제 승인 진행 중입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_006": {
-            "description": "이미 해당 결제 요청에 대한 결제 정보가 존재합니다. 새롭게 결제 요청을 진행해야합니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_002": {
-            "description": "존재하지 않는 결제 요청입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/payment-service/payment/refund": {
-      "post": {
-        "tags": ["토스페이먼츠 PG사"],
-        "summary": "토스페이먼츠 PG사 결제 환불 API (가상계좌, 카드 결제)",
-        "description": "1. 광클 방지를 위한 disable 처리해주세요.\n2. 플랫폼 환불 정책 상 부분 환불은 불가능 합니다.\n3. 환불의 경우 24이내 3가지(카드 결제 취소, 가상 계좌 입금 전, 가상 계좌 입금 후)가 존재합니다.\n5. 가상 계좌 입금 전의 경우 결제 승인이 이루어지지 않았기 때문에 가상 계좌 요청 24시간 이내를 기준으로 계산합니다.\n6. 24시간이 지난 가상 계좌 입금의 경우 서버에서 자동으로 결제 취소 처리합니다.\n7. **카드 결제 취소와 가상 계좌 입금 전의 경우 paymentEventSeq 값만 넘겨주시면 됩니다.**\n8. 가상 계좌 입금 후의 경우 bankCode(은행, 증권사 코드), accountNumber(환불 받을 계좌 번호), holderName(예금주)를 같이 넘겨야합니다.\n9. 다음 은행 코드 중 하나를 사용해야 하며, 문자열 형태로 전달됩니다.\n   - 03: IBK기업은행\n   - 04: KB국민은행\n   - 07: Sh수협은행\n   - 11: NH농협은행\n   - 20: 우리은행\n   - 23: SC제일은행\n   - 27: 씨티은행\n   - 31: 대구은행 (iM뱅크)\n   - 32: 부산은행\n   - 34: 광주은행\n   - 35: 제주은행\n   - 37: 전북은행\n   - 39: 경남은행\n   - 45: 새마을금고\n   - 48: 신협\n   - 50: 저축은행중앙회\n   - 64: 산림조합\n   - 71: 우체국예금보험\n   - 81: 하나은행\n   - 88: 신한은행\n   - 89: 케이뱅크\n   - 90: 카카오뱅크\n   - 92: 토스뱅크\n",
-        "operationId": "refundTossPaymentApproval",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RefundTossPaymentApprovalRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "NOT_FOUND_EXCEPTION_003": {
-            "description": "존재하지 않는 결제입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_014": {
-            "description": "이미 환불 처리된 건입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_013": {
-            "description": "해당 결제는 마감 시간이 지났습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_015": {
-            "description": "가상계좌 결제 완료 상태가 아닐 경우 환불 계좌 정보를 입력할 수 없습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/payment-service/payment-event": {
+    "/api/public/send-email/{email}": {
       "get": {
-        "tags": ["결제 요청"],
-        "summary": "결제 요청하기 조회 API",
-        "description": "1. 결제 승인 유무의 경우 orderId의 존재 여부로 확인하면 됩니다.\n2. 결제 승인되지 않았을 때(orderId X)의 Response\n    - GetREQUESTEDPaymentEventEntityResponse\n3. 결제 승인 됐을 때(orderId O)의 Response\n    - GetCONFIRMEDPaymentEventEntityResponse\n",
-        "operationId": "getPaymentEventEntity",
-        "parameters": [
-          {
-            "name": "paymentUniqueType",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "tags": ["회원 권한 불필요"],
+        "summary": "이메일 전송 (유효시간 5분)",
+        "operationId": "sendEmail",
+        "parameters": [{ "name": "email", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
           "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/GetREQUESTEDPaymentEventEntityResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GetCONFIRMEDPaymentEventEntityResponse"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_002": {
-            "description": "존재하지 않는 결제 요청입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["결제 요청"],
-        "summary": "결제 요청하기 생성 API",
-        "description": "1. 광클 방지를 위한 disable 처리해주세요.\n2. amount는 0보다 작을 수 없습니다.\n3. 만약 해당 결제 요청을 통해 결제 승인을 진행한 경우 다시 결제를 진행하려면 새로운 결제 요청하기를 생성해야합니다.\n",
-        "operationId": "savePaymentEventEntity",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": ["request"],
-                "type": "object",
-                "properties": {
-                  "contractConfirmationUrl": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "refundPolicyUrl": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "request": {
-                    "$ref": "#/components/schemas/SavePaymentEventRequest"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_002": {
-            "description": "동시성 저장은 불가능합니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseSavePaymentEventEntityResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_005": {
-            "description": "존재하지 않는 솔루션입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/resetLink": {
-      "post": {
-        "tags": ["벤더 기업"],
-        "summary": "Vendor reset Link API",
-        "description": "Vendor reset Link API",
-        "operationId": "resetLinkVendor",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetLinkRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "NOT_FOUND_EXCEPTION_009": {
-            "description": "존재하지 않는 이메일 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_011": {
-            "description": "Redis 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseResetLinkResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_012": {
-            "description": "Vendor Name이 일치하지 않습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/login": {
-      "post": {
-        "tags": ["벤더 기업"],
-        "summary": "Vendor Login API",
-        "description": "Vendor Login API",
-        "operationId": "loginVendor",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginVendorRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "NOT_FOUND_EXCEPTION_009": {
-            "description": "존재하지 않는 이메일 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_007": {
-            "description": "비밀번호가 일치하지 않습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_011": {
-            "description": "Redis 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseLoginVendorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/join": {
-      "post": {
-        "tags": ["벤더 기업"],
-        "summary": "join Vendor API",
-        "description": "벤더 기업 가입 API",
-        "operationId": "saveVendorEntity",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": ["businessLicenseImage", "request"],
-                "type": "object",
-                "properties": {
-                  "request": {
-                    "$ref": "#/components/schemas/SaveVendorRequest"
-                  },
-                  "businessLicenseImage": {
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "CONFLICT_EXCEPTION_002": {
-            "description": "동시성 저장은 불가능합니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_002": {
-            "description": "S3 UPLOAD 실패",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_001": {
-            "description": "중복된 이메일입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/email/verify": {
-      "post": {
-        "tags": ["벤더 기업"],
-        "summary": "Code Verify API",
-        "description": "인증코드 검증 API",
-        "operationId": "verifyCode",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VerifyCodeRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_005": {
-            "description": "이미 가입한 이메일 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_006": {
-            "description": "존재하지 않는 코드입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_006": {
-            "description": "인증코드가 일치하지 않습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/email/send": {
-      "post": {
-        "tags": ["벤더 기업"],
-        "summary": "Mail Send API",
-        "description": "인증 메일 전송 API",
-        "operationId": "sendMail",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SendMailRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "SERVER_EXCEPTION_012": {
-            "description": "이메일 전송 중 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_011": {
-            "description": "Redis 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_005": {
-            "description": "이미 가입한 이메일 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/consumer/resetLink": {
-      "post": {
-        "tags": ["수요 기업"],
-        "summary": "Consumer reset Link API",
-        "description": "Consumer reset Link API",
-        "operationId": "resetLinkConsumer",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetLinkRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "NOT_FOUND_EXCEPTION_009": {
-            "description": "존재하지 않는 이메일 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_011": {
-            "description": "Redis 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_011": {
-            "description": "Consumer Name이 일치하지 않습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseResetLinkResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/consumer/login": {
-      "post": {
-        "tags": ["수요 기업"],
-        "summary": "Consumer Login API",
-        "description": "Consumer Login API",
-        "operationId": "loginConsumer",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/LoginConsumerRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "NOT_FOUND_EXCEPTION_009": {
-            "description": "존재하지 않는 이메일 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_007": {
-            "description": "비밀번호가 일치하지 않습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_011": {
-            "description": "Redis 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseLoginConsumerResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/consumer/join": {
-      "post": {
-        "tags": ["수요 기업"],
-        "summary": "join Consumer API",
-        "description": "수요 기업 가입 API",
-        "operationId": "saveConsumer",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SaveConsumerRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "DB002": {
-            "description": "400 Invalid DTO Parameter errors",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "요청에 성공하였습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          },
-          "CEDCE002": {
-            "description": "409 CONSUMER_EMAIL_DUPLICATION_CONFLICT_EXCEPTION",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "S500": {
-            "description": "500 SERVER_ERROR",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/consumer/email/verify": {
-      "post": {
-        "tags": ["수요 기업"],
-        "summary": "Code Verify API",
-        "description": "인증코드 검증 API",
-        "operationId": "verifyCode_1",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VerifyCodeRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_005": {
-            "description": "이미 가입한 이메일 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_006": {
-            "description": "존재하지 않는 코드입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_006": {
-            "description": "인증코드가 일치하지 않습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/consumer/email/send": {
-      "post": {
-        "tags": ["수요 기업"],
-        "summary": "Mail Send API",
-        "description": "인증 메일 전송 API",
-        "operationId": "sendMail_1",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SendMailRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "SERVER_EXCEPTION_012": {
-            "description": "이메일 전송 중 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_011": {
-            "description": "Redis 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "CONFLICT_EXCEPTION_005": {
-            "description": "이미 가입한 이메일 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/chat": {
-      "get": {
-        "tags": ["채팅 파일"],
-        "summary": "채팅 파일 조회 API",
-        "operationId": "getChatEntityFile",
-        "parameters": [
-          {
-            "name": "chatUniqueType",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseGetChatEntityFile"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": ["채팅 파일"],
-        "summary": "채팅 파일 저장 API",
-        "operationId": "saveChatEntity",
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "required": ["request"],
-                "type": "object",
-                "properties": {
-                  "file": {
-                    "type": "string",
-                    "format": "binary"
-                  },
-                  "request": {
-                    "$ref": "#/components/schemas/SaveChatRequest"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_010": {
-            "description": "전송자가 수요/벤더 기업에 존재하지 않습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_011": {
-            "description": "수신자가 수요/벤더 기업에 존재하지 않습니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/resetPassword": {
-      "patch": {
-        "tags": ["벤더 기업"],
-        "summary": "Vendor reset API",
-        "description": "Vendor reset API",
-        "operationId": "resetPasswordVendor",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetPasswordRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_011": {
-            "description": "Redis 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "UNAUTHORIZED_EXCEPTION_003": {
-            "description": "이미 사용한 JWT 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/consumer/resetPassword": {
-      "patch": {
-        "tags": ["수요 기업"],
-        "summary": "Consumer reset API",
-        "description": "Consumer reset API",
-        "operationId": "resetPasswordConsumer",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ResetPasswordRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_011": {
-            "description": "Redis 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "UNAUTHORIZED_EXCEPTION_003": {
-            "description": "이미 사용한 JWT 입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseString"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/solution-service/solution/list": {
-      "get": {
-        "tags": ["솔루션"],
-        "summary": "전체 솔루션 조회 (필터링, 키워드 검색) API",
-        "description": "1. Param 값의 경우 전부 NULL 허용입니다.\n2. NULL로 들어온 값은 필터링하지 않습니다.\n3. budget의 경우 (전체, 500,000원 미만, 500,000~1,000,000원 미만, 1,000,000원~3,000,000원 미만, 3,000,000원~5,000,000원 미만, 5,000,000원~10,000,000원 미만, 10,000,000원 이상) 문자 그대로 보내주세요. Default의 경우 \"전체\" 보내주시면 됩니다.\n4. start와 end는 시작과 끝의 인덱스 번호입니다. default: start = 0, end = 15\n",
-        "operationId": "getAllSolutionEntity",
-        "parameters": [
-          {
-            "name": "category",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "budget",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "default": "전체"
-            }
-          },
-          {
-            "name": "keyword",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "start",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "end",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 15
-            }
-          }
-        ],
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseListGetAllSolutionEntityResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/solution-service/solution/category": {
-      "get": {
-        "tags": ["솔루션"],
-        "summary": "솔루션 카테고리별 조회 API",
-        "operationId": "getSolutionEntityByCategory",
-        "parameters": [
-          {
-            "name": "vendorSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "category",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_008": {
-            "description": "해당 기업이 작성한 카테고리 솔루션이 존재하지 않습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseGetSolutionEntityResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/payment-service/payment-event/order": {
-      "get": {
-        "tags": ["결제 요청"],
-        "summary": "결제 요청하기 후 주문내역 API",
-        "description": "1. 삭제된 솔루션의 경우 결제요청하기 화면에서 DISABLE 되어야 함\n",
-        "operationId": "getPaymentEventEntityOrder",
-        "parameters": [
-          {
-            "name": "paymentEventSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_002": {
-            "description": "존재하지 않는 결제 요청입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseGetPaymentEventEntityOrderResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_005": {
-            "description": "존재하지 않는 솔루션입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/payment-service/payment-event/conflict": {
-      "get": {
-        "tags": ["결제 요청"],
-        "summary": "결제 요청하기 중복확인 API",
-        "operationId": "getPaymentEventConflict",
-        "parameters": [
-          {
-            "name": "vendorSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "consumerSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "category",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseBoolean"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_005": {
-            "description": "존재하지 않는 솔루션입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/solution": {
-      "get": {
-        "tags": ["벤더 기업"],
-        "summary": "벤더 기업 생성 솔루션 조회 API",
-        "operationId": "getVendorSolutionEntities",
-        "parameters": [
-          {
-            "name": "vendorSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseListGetVendorSolutionEntitiesResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/conflict": {
-      "get": {
-        "tags": ["벤더 기업"],
-        "summary": "벤더/수요 기업 이메일 중복 확인 API",
-        "description": "1. type은 vendor, consumer 입니다. 대소문자 상관 없습니다.\n",
-        "operationId": "conflictVendorConsumerEntity",
-        "parameters": [
-          {
-            "name": "email",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "type",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseBoolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/vendor/category": {
-      "get": {
-        "tags": ["벤더 기업"],
-        "summary": "벤더 기업이 생성한 솔루션 카테고리",
-        "operationId": "getVendorSolutionCategory",
-        "parameters": [
-          {
-            "name": "vendorSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseListGetVendorSolutionCategoryResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/stat": {
-      "get": {
-        "tags": ["통계 자료"],
-        "summary": "통계 자료 조회 API",
-        "operationId": "getStatEntity",
-        "parameters": [
-          {
-            "name": "vendorSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseGetVendorStatResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/dashboard/vendor": {
-      "get": {
-        "tags": ["대시 보드"],
-        "summary": "벤더 기업 대시보드 운영 현황 API",
-        "description": "1. paymentStatus: DONE(정산 대기), SETTLED(정산 완료)\n2. paymentStatus를 보내지 않으면 DONE, SETTLED 전체 데이터 반환됩니다.\n7. 넘어가는 paymentStatus 값에 따라 Response가 다릅니다.\n    - DONE: GetVendorDashboardDONEListResponse\n    - SETTLED: GetVendorDashboardSETTELEDListResponse\n",
-        "operationId": "getVendorDashboardList",
-        "parameters": [
-          {
-            "name": "vendorSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "paymentStatus",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "start",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "end",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 15
-            }
-          }
-        ],
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/GetVendorDashboardDONEListResponse"
-                    },
-                    {
-                      "$ref": "#/components/schemas/GetVendorDashboardSETTELEDListResponse"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/dashboard/vendor/status": {
-      "get": {
-        "tags": ["대시 보드"],
-        "summary": "벤더 기업 대시보드 운영 현황 API",
-        "description": "1. CONFIRMED: 구매확정\n2. DONE: 정산대기\n3. SETTLED: 정산완료\n",
-        "operationId": "getVendorDashboard",
-        "parameters": [
-          {
-            "name": "vendorSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseGetVendorDashboardResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/dashboard/consumer": {
-      "get": {
-        "tags": ["대시 보드"],
-        "summary": "수요 기업 대시보드 조회 API",
-        "description": "1. paymentStatus: DONE(구매 확정), SETTLED(정산 완료)\n2. paymentStatus가 NULL일 경우 DONE, SETTLED 전부 반환합니다.\n3. 결제 승인 일자 기준 내림차순 정렬합니다.\n",
-        "operationId": "getConsumerDashBoard",
-        "parameters": [
-          {
-            "name": "consumerSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "paymentStatus",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "start",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "end",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 4
-            }
-          }
-        ],
-        "responses": {
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "NOT_FOUND_EXCEPTION_004": {
-            "description": "존재하지 않는 수요 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseListGetConsumerDashboardResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/b2b-service/client": {
-      "get": {
-        "tags": ["주요 기업 고객"],
-        "summary": "주요 기업 고객 전체 조회 API",
-        "operationId": "getAllClientEntity",
-        "parameters": [
-          {
-            "name": "vendorSeq",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "NOT_FOUND_EXCEPTION_001": {
-            "description": "존재하지 않는 벤더 기업입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "BAD_REQUEST_EXCEPTION_001": {
-            "description": "요청 데이터 오류입니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "SERVER_EXCEPTION_001": {
-            "description": "내부 서버 오류가 발생했습니다.",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "SUCCESS",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/BaseResponseListGetAllClientResponse"
-                }
-              }
-            }
+            "description": "OK",
+            "content": { "*/*": { "schema": { "$ref": "#/components/schemas/BaseResponseString" } } }
           }
         }
       }
@@ -3251,1705 +324,302 @@
   },
   "components": {
     "schemas": {
-      "ModifySolutionEntityRequest": {
+      "UpdateSolutionImageRequest": {
+        "type": "object",
+        "properties": { "imageUrl": { "type": "string" }, "imageType": { "type": "string" } }
+      },
+      "UpdateSolutionPlanDetailRequest": {
+        "type": "object",
+        "properties": { "name": { "type": "string" }, "context": { "type": "string" } }
+      },
+      "UpdateSolutionPlanRequest": {
         "type": "object",
         "properties": {
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionName": {
-            "type": "string"
-          },
-          "solutionDetail": {
-            "type": "string"
-          },
-          "prevCategory": {
-            "type": "string"
-          },
-          "nextCategory": {
-            "type": "string"
-          },
-          "recommendedCompanySize": {
-            "type": "string"
-          },
-          "solutionImplementationType": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "number",
-            "format": "double"
-          },
-          "duration": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionEffect": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SolutionEffectEntityRequest"
-            }
-          },
-          "keyword": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
+          "name": { "type": "string" },
+          "subName": { "type": "string" },
+          "price": { "type": "integer", "format": "int64" },
+          "planType": { "type": "string" },
+          "details": { "type": "array", "items": { "$ref": "#/components/schemas/UpdateSolutionPlanDetailRequest" } }
         }
       },
-      "SolutionEffectEntityRequest": {
+      "UpdateSolutionRequest": {
+        "required": ["category", "explanation", "name", "price", "solutionSeq"],
         "type": "object",
         "properties": {
-          "effectName": {
-            "type": "string"
-          },
-          "percent": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "direction": {
-            "type": "string"
-          }
+          "solutionSeq": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "explanation": { "type": "string" },
+          "category": { "type": "string" },
+          "price": { "type": "integer", "format": "int64" },
+          "images": { "type": "array", "items": { "$ref": "#/components/schemas/UpdateSolutionImageRequest" } },
+          "plans": { "type": "array", "items": { "$ref": "#/components/schemas/UpdateSolutionPlanRequest" } },
+          "keywords": { "type": "array", "items": { "type": "string" } }
         }
       },
-      "ErrorResponse": {
+      "BaseResponseCreateSolutionResponse": {
         "type": "object",
         "properties": {
-          "httpStatus": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/CreateSolutionResponse" }
         }
+      },
+      "CreateSolutionResponse": {
+        "type": "object",
+        "properties": { "solutionSeq": { "type": "integer", "format": "int64" } }
       },
       "BaseResponseString": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "string"
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "type": "string" }
         }
       },
-      "ModifySolutionReviewRequest": {
+      "CreateSolutionImageRequest": {
         "type": "object",
-        "properties": {
-          "solutionReviewSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "comment": {
-            "type": "string"
-          },
-          "star": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      },
-      "LocalTime": {
-        "type": "object",
-        "properties": {
-          "hour": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "minute": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "second": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nano": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "StatInfo": {
-        "type": "object",
-        "properties": {
-          "label": {
-            "type": "string"
-          },
-          "percentage": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "statType": {
-            "type": "string",
-            "enum": ["SALES_SIZE", "EMPLOYEES_SIZE"]
-          }
-        }
-      },
-      "UpdateVendorInfoRequest": {
-        "type": "object",
-        "properties": {
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "vendorName": {
-            "type": "string"
-          },
-          "managerName": {
-            "type": "string"
-          },
-          "phoneNumber": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "audit": {
-            "type": "boolean"
-          },
-          "accountNumber": {
-            "type": "string"
-          },
-          "bank": {
-            "type": "string"
-          },
-          "vendorExplanation": {
-            "type": "string"
-          },
-          "weekdayAvailable": {
-            "type": "boolean"
-          },
-          "weekdayStartTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "weekdayEndTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "weekendAvailable": {
-            "type": "boolean"
-          },
-          "weekendStartTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "weekendEndTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "holidayAvailable": {
-            "type": "boolean"
-          },
-          "holidayStartTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "holidayEndTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "orderCount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "clientCount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "stats": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StatInfo"
-            }
-          }
-        }
-      },
-      "UpdateConsumerInfoRequest": {
-        "type": "object",
-        "properties": {
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerName": {
-            "type": "string"
-          },
-          "phoneNumber": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "industry": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          }
-        }
-      },
-      "SaveSolutionEntityRequest": {
-        "type": "object",
-        "properties": {
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionName": {
-            "type": "string"
-          },
-          "solutionDetail": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string"
-          },
-          "recommendedCompanySize": {
-            "type": "string"
-          },
-          "solutionImplementationType": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "number",
-            "format": "double"
-          },
-          "duration": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionEffect": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SolutionEffectEntityRequest"
-            }
-          },
-          "keyword": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "BaseResponseSaveSolutionEntityResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/SaveSolutionEntityResponse"
-          }
-        }
-      },
-      "SaveSolutionEntityResponse": {
-        "type": "object",
-        "properties": {
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "SaveSolutionReviewRequest": {
-        "type": "object",
-        "properties": {
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "comment": {
-            "type": "string"
-          },
-          "star": {
-            "type": "number",
-            "format": "double"
-          }
-        }
-      },
-      "BaseResponseSaveSolutionReviewResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/SaveSolutionReviewResponse"
-          }
-        }
-      },
-      "SaveSolutionReviewResponse": {
-        "type": "object",
-        "properties": {
-          "solutionReviewSeq": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "TossPaymentApprovalRequest": {
-        "type": "object",
-        "properties": {
-          "paymentEventSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentKey": {
-            "type": "string"
-          },
-          "orderId": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "TossCardPaymentApprovalResponse": {
-        "type": "object",
-        "properties": {
-          "orderId": {
-            "type": "string"
-          },
-          "orderName": {
-            "type": "string"
-          },
-          "paymentKey": {
-            "type": "string"
-          },
-          "method": {
-            "type": "string"
-          },
-          "totalAmount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "approvedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "cardCompany": {
-            "type": "string"
-          },
-          "cardNumber": {
-            "type": "string"
-          },
-          "cardType": {
-            "type": "string"
-          },
-          "receiptUrl": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          }
-        }
-      },
-      "TossVirtualAccountPaymentResponse": {
-        "type": "object",
-        "properties": {
-          "orderId": {
-            "type": "string"
-          },
-          "orderName": {
-            "type": "string"
-          },
-          "paymentKey": {
-            "type": "string"
-          },
-          "method": {
-            "type": "string"
-          },
-          "totalAmount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "requestedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "virtualAccountNumber": {
-            "type": "string"
-          },
-          "bankCode": {
-            "type": "string"
-          },
-          "customerName": {
-            "type": "string"
-          },
-          "dueDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "cashReceiptUrl": {
-            "type": "string"
-          },
-          "secret": {
-            "type": "string"
-          },
-          "receiptUrl": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          }
-        }
-      },
-      "TossEasyPayPaymentApprovalResponse": {
-        "type": "object",
-        "properties": {
-          "orderId": {
-            "type": "string"
-          },
-          "orderName": {
-            "type": "string"
-          },
-          "paymentKey": {
-            "type": "string"
-          },
-          "method": {
-            "type": "string"
-          },
-          "totalAmount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "approvedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "receiptUrl": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          }
-        }
-      },
-      "RefundTossPaymentApprovalRequest": {
-        "type": "object",
-        "properties": {
-          "orderId": {
-            "type": "string"
-          },
-          "cancelReason": {
-            "type": "string"
-          },
-          "bankCode": {
-            "type": "string"
-          },
-          "accountNumber": {
-            "type": "string"
-          },
-          "holderName": {
-            "type": "string"
-          }
-        }
-      },
-      "SavePaymentEventRequest": {
-        "type": "object",
-        "properties": {
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "category": {
-            "type": "string"
-          },
-          "paymentEventName": {
-            "type": "string"
-          },
-          "paymentEventUniqueType": {
-            "type": "string"
-          }
-        }
-      },
-      "BaseResponseSavePaymentEventEntityResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/SavePaymentEventEntityResponse"
-          }
-        }
-      },
-      "SavePaymentEventEntityResponse": {
-        "type": "object",
-        "properties": {
-          "paymentEventSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentEventUniqueType": {
-            "type": "string"
-          }
-        }
-      },
-      "ResetLinkRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "vendorName": {
-            "type": "string"
-          }
-        }
-      },
-      "BaseResponseResetLinkResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/ResetLinkResponse"
-          }
-        }
-      },
-      "ResetLinkResponse": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string"
-          },
-          "link": {
-            "type": "string"
-          },
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "LoginVendorRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          }
-        }
-      },
-      "BaseResponseLoginVendorResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/LoginVendorResponse"
-          }
-        }
-      },
-      "LoginVendorResponse": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string"
-          },
-          "refreshToken": {
-            "type": "string"
-          },
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "vendorUniqueType": {
-            "type": "string"
-          },
-          "vendorName": {
-            "type": "string"
-          }
-        }
-      },
-      "SaveVendorRequest": {
-        "type": "object",
-        "properties": {
-          "vendorName": {
-            "type": "string"
-          },
-          "managerName": {
-            "type": "string"
-          },
-          "phoneNumber": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "confirmPassword": {
-            "type": "string"
-          }
-        }
-      },
-      "VerifyCodeRequest": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          }
-        }
-      },
-      "SendMailRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          }
-        }
-      },
-      "LoginConsumerRequest": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          }
-        }
-      },
-      "BaseResponseLoginConsumerResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/LoginConsumerResponse"
-          }
-        }
-      },
-      "LoginConsumerResponse": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string"
-          },
-          "refreshToken": {
-            "type": "string"
-          },
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerUniqueType": {
-            "type": "string"
-          },
-          "consumerName": {
-            "type": "string"
-          }
-        }
-      },
-      "SaveConsumerRequest": {
-        "type": "object",
-        "properties": {
-          "consumerName": {
-            "type": "string"
-          },
-          "phoneNum": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "confirmPassword": {
-            "type": "string"
-          },
-          "industry": {
-            "type": "string"
-          }
-        }
-      },
-      "SaveChatRequest": {
-        "type": "object",
-        "properties": {
-          "senderSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "receiverSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "chatUniqueType": {
-            "type": "string"
-          }
-        }
-      },
-      "ResetPasswordRequest": {
-        "type": "object",
-        "properties": {
-          "newPassword": {
-            "type": "string"
-          },
-          "confirmPassword": {
-            "type": "string"
-          }
-        }
-      },
-      "BaseResponseGetSolutionEntityResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/GetSolutionEntityResponse"
-          }
-        }
-      },
-      "GetSolutionEntityResponse": {
-        "type": "object",
-        "properties": {
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "representImageUrl": {
-            "type": "string"
-          },
-          "descriptionPdfUrl": {
-            "type": "string"
-          },
-          "solutionName": {
-            "type": "string"
-          },
-          "solutionDetail": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionImplementationType": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "duration": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "recommendedCompanySize": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "solutionEffect": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SolutionEffectResponse"
-            }
-          },
-          "keywords": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "SolutionEffectResponse": {
-        "type": "object",
-        "properties": {
-          "effectName": {
-            "type": "string"
-          },
-          "percent": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "direction": {
-            "type": "string",
-            "enum": ["INCREASE", "DECREASE"]
-          }
-        }
-      },
-      "BaseResponseListGetAllSolutionEntityResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetAllSolutionEntityResponse"
-            }
-          }
-        }
+        "properties": { "imageUrl": { "type": "string" }, "imageType": { "type": "string" } }
       },
-      "GetAllSolutionEntityResponse": {
+      "CreateSolutionPlanDetailRequest": {
         "type": "object",
-        "properties": {
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionName": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "representImageUrl": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          },
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "vendorName": {
-            "type": "string"
-          },
-          "averageStar": {
-            "type": "number",
-            "format": "double"
-          },
-          "countSolutionReview": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
+        "properties": { "name": { "type": "string" }, "context": { "type": "string" } }
       },
-      "BaseResponseListGetAllSolutionReviewResponse": {
+      "CreateSolutionPlanRequest": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetAllSolutionReviewResponse"
-            }
-          }
+          "name": { "type": "string" },
+          "subName": { "type": "string" },
+          "price": { "type": "integer", "format": "int64" },
+          "planType": { "type": "string" },
+          "details": { "type": "array", "items": { "$ref": "#/components/schemas/CreateSolutionPlanDetailRequest" } }
         }
       },
-      "GetAllSolutionReviewResponse": {
+      "CreateSolutionRequest": {
+        "required": ["category", "explanation", "name", "price"],
         "type": "object",
         "properties": {
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerName": {
-            "type": "string"
-          },
-          "consumerImageUrl": {
-            "type": "string"
-          },
-          "start": {
-            "type": "number",
-            "format": "double"
-          },
-          "comment": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "name": { "type": "string" },
+          "explanation": { "type": "string" },
+          "category": { "type": "string" },
+          "price": { "type": "integer", "format": "int64" },
+          "images": { "type": "array", "items": { "$ref": "#/components/schemas/CreateSolutionImageRequest" } },
+          "plans": { "type": "array", "items": { "$ref": "#/components/schemas/CreateSolutionPlanRequest" } },
+          "keywords": { "type": "array", "items": { "type": "string" } }
         }
       },
-      "GetREQUESTEDPaymentEventEntityResponse": {
+      "ReissueTokenRequest": {
+        "required": ["refreshToken"],
         "type": "object",
-        "properties": {
-          "paymentEventSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentEventName": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "contractConfirmationUrl": {
-            "type": "string"
-          },
-          "refundPolicyUrl": {
-            "type": "string"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "deleted": {
-            "type": "boolean"
-          }
-        }
+        "properties": { "refreshToken": { "type": "string" } }
       },
-      "GetCONFIRMEDPaymentEventEntityResponse": {
+      "BaseResponseReIssueTokenResponse": {
         "type": "object",
         "properties": {
-          "paymentEventSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentEventName": {
-            "type": "string"
-          },
-          "orderId": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "refundDueDate": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/ReIssueTokenResponse" }
         }
       },
-      "BaseResponseGetPaymentEventEntityOrderResponse": {
+      "ReIssueTokenResponse": {
         "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/GetPaymentEventEntityOrderResponse"
-          }
-        }
+        "properties": { "accessToken": { "type": "string" }, "refreshToken": { "type": "string" } }
       },
-      "GetPaymentEventEntityOrderResponse": {
+      "RegisterVendorRequest": {
+        "required": ["businessImageUrl", "businessName", "email", "managerName", "password", "phone"],
         "type": "object",
         "properties": {
-          "paymentEventSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentEventName": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          },
-          "vendorName": {
-            "type": "string"
-          },
-          "profileImage": {
-            "type": "string"
-          },
-          "representImageUrl": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "tax": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "actualAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerName": {
-            "type": "string"
-          },
-          "phoneNumber": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          }
+          "businessName": { "type": "string" },
+          "managerName": { "type": "string" },
+          "phone": { "type": "string" },
+          "email": { "type": "string" },
+          "password": { "type": "string" },
+          "businessImageUrl": { "type": "string" }
         }
       },
-      "BaseResponseBoolean": {
+      "RegisterConsumerRequest": {
+        "required": ["businessName", "email", "managerName", "password", "phone"],
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "boolean"
-          }
+          "businessName": { "type": "string" },
+          "managerName": { "type": "string" },
+          "phone": { "type": "string" },
+          "email": { "type": "string" },
+          "password": { "type": "string" }
         }
       },
-      "BaseResponseGetVendorInfo": {
+      "PresignedURLRequest": {
+        "required": ["expiration", "fileName"],
         "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/GetVendorInfo"
-          }
-        }
+        "properties": { "fileName": { "type": "string" }, "expiration": { "type": "integer", "format": "int32" } }
       },
-      "GetAllClientResponse": {
+      "BaseResponsePresignedURLResponse": {
         "type": "object",
         "properties": {
-          "clientSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "logoImageUrl": {
-            "type": "string"
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/PresignedURLResponse" }
         }
       },
-      "GetVendorInfo": {
+      "PresignedURLResponse": { "type": "object", "properties": { "url": { "type": "string" } } },
+      "LoginUserRequest": {
+        "required": ["email", "password"],
         "type": "object",
-        "properties": {
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "vendorName": {
-            "type": "string"
-          },
-          "managerName": {
-            "type": "string"
-          },
-          "phoneNumber": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "audit": {
-            "type": "boolean"
-          },
-          "accountNumber": {
-            "type": "string"
-          },
-          "bank": {
-            "type": "string"
-          },
-          "vendorExplanation": {
-            "type": "string"
-          },
-          "vendorBannerImageUrl": {
-            "type": "string"
-          },
-          "weekdayAvailable": {
-            "type": "boolean"
-          },
-          "weekdayStartTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "weekdayEndTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "weekendAvailable": {
-            "type": "boolean"
-          },
-          "weekendStartTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "weekendEndTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "holidayAvailable": {
-            "type": "boolean"
-          },
-          "holidayStartTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "holidayEndTime": {
-            "$ref": "#/components/schemas/LocalTime"
-          },
-          "orderCount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "clientCount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "vendorUniqueType": {
-            "type": "string"
-          },
-          "profileImage": {
-            "type": "string"
-          },
-          "stats": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StatResponse"
-            }
-          },
-          "clientResponses": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetAllClientResponse"
-            }
-          }
-        }
+        "properties": { "email": { "type": "string" }, "password": { "type": "string" } }
       },
-      "StatResponse": {
+      "BaseResponseLoginUserResponse": {
         "type": "object",
         "properties": {
-          "statType": {
-            "type": "string",
-            "enum": ["SALES_SIZE", "EMPLOYEES_SIZE"]
-          },
-          "percentage": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "label": {
-            "type": "string"
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/LoginUserResponse" }
         }
       },
-      "BaseResponseListGetVendorSolutionEntitiesResponse": {
+      "LoginUserResponse": {
         "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetVendorSolutionEntitiesResponse"
-            }
-          }
-        }
+        "properties": { "accessToken": { "type": "string" }, "refreshToken": { "type": "string" } }
       },
-      "GetVendorSolutionEntitiesResponse": {
+      "VerifyEmailAuthKeyRequest": {
+        "required": ["authCode", "email"],
         "type": "object",
-        "properties": {
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionName": {
-            "type": "string"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
+        "properties": { "email": { "type": "string" }, "authCode": { "type": "string" } }
       },
-      "BaseResponseListGetVendorSolutionCategoryResponse": {
+      "CreateSolutionReviewRequest": {
+        "required": ["context", "rate", "solutionSeq"],
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetVendorSolutionCategoryResponse"
-            }
-          }
+          "solutionSeq": { "type": "integer", "format": "int64" },
+          "context": { "type": "string" },
+          "rate": { "type": "number", "format": "double" }
         }
       },
-      "GetVendorSolutionCategoryResponse": {
+      "BaseResponseCreateSolutionReviewResponse": {
         "type": "object",
         "properties": {
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          },
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/CreateSolutionReviewResponse" }
         }
       },
-      "BaseResponseGetVendorStatResponse": {
+      "CreateSolutionReviewResponse": {
         "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/GetVendorStatResponse"
-          }
-        }
+        "properties": { "solutionReviewSeq": { "type": "integer", "format": "int64" } }
       },
-      "GetVendorStatResponse": {
+      "BaseResponseObject": {
         "type": "object",
         "properties": {
-          "salesSize": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StatData"
-            }
-          },
-          "employeesSize": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StatData"
-            }
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "type": "object" }
         }
       },
-      "StatData": {
+      "BaseResponseGetSolutionResponse": {
         "type": "object",
         "properties": {
-          "label": {
-            "type": "string"
-          },
-          "percentage": {
-            "type": "integer",
-            "format": "int64"
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/GetSolutionResponse" }
         }
       },
-      "GetVendorDashboardDONEListResponse": {
+      "GetSolutionImageRequest": {
         "type": "object",
-        "properties": {
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentStatus": {
-            "type": "string",
-            "enum": ["DONE", "CANCELED", "PARTIAL_CANCELED", "EXPIRED", "ABORTED", "WAITING_FOR_DEPOSIT", "SETTLED"]
-          },
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionName": {
-            "type": "string"
-          },
-          "solutionAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "settlementDueDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "settlementAmount": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerName": {
-            "type": "string"
-          }
-        }
+        "properties": { "imageUrl": { "type": "string" }, "imageType": { "type": "string" } }
       },
-      "GetVendorDashboardSETTELEDListResponse": {
+      "GetSolutionPlanDetailRequest": {
         "type": "object",
-        "properties": {
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentStatus": {
-            "type": "string",
-            "enum": ["DONE", "CANCELED", "PARTIAL_CANCELED", "EXPIRED", "ABORTED", "WAITING_FOR_DEPOSIT", "SETTLED"]
-          },
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionName": {
-            "type": "string"
-          },
-          "solutionAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "settlementDueDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "settlementAmount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerName": {
-            "type": "string"
-          }
-        }
+        "properties": { "name": { "type": "string" }, "context": { "type": "string" } }
       },
-      "BaseResponseGetVendorDashboardResponse": {
+      "GetSolutionPlanRequest": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/GetVendorDashboardResponse"
-          }
+          "name": { "type": "string" },
+          "subName": { "type": "string" },
+          "price": { "type": "integer", "format": "int64" },
+          "planType": { "type": "string" },
+          "details": { "type": "array", "items": { "$ref": "#/components/schemas/GetSolutionPlanDetailRequest" } }
         }
       },
-      "GetVendorDashboardResponse": {
+      "GetSolutionResponse": {
         "type": "object",
         "properties": {
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "CONFIRMED": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "DONE": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "SETTLED": {
-            "type": "integer",
-            "format": "int64"
-          }
+          "solutionSeq": { "type": "integer", "format": "int64" },
+          "name": { "type": "string" },
+          "explanation": { "type": "string" },
+          "category": { "type": "string" },
+          "price": { "type": "integer", "format": "int64" },
+          "images": { "type": "array", "items": { "$ref": "#/components/schemas/GetSolutionImageRequest" } },
+          "plans": { "type": "array", "items": { "$ref": "#/components/schemas/GetSolutionPlanRequest" } },
+          "reviewCnt": { "type": "integer", "format": "int64" },
+          "reviewAverage": { "type": "number", "format": "double" },
+          "vendorSeq": { "type": "integer", "format": "int64" },
+          "vendorBusinessName": { "type": "string" },
+          "profileImageUrl": { "type": "string" }
         }
       },
-      "BaseResponseListGetConsumerDashboardResponse": {
+      "BaseResponseGetSolutionReviewPageResponse": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetConsumerDashboardResponse"
-            }
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/GetSolutionReviewPageResponse" }
         }
       },
-      "GetConsumerDashboardResponse": {
+      "GetSolutionReviewPageResponse": {
         "type": "object",
         "properties": {
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "vendorSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "paymentStatus": {
-            "type": "string",
-            "enum": ["DONE", "CANCELED", "PARTIAL_CANCELED", "EXPIRED", "ABORTED", "WAITING_FOR_DEPOSIT", "SETTLED"]
-          },
-          "paymentCompletedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "representImageUrl": {
-            "type": "string"
-          },
-          "vendorName": {
-            "type": "string"
-          },
-          "vendorUniqueType": {
-            "type": "string"
-          },
-          "solutionSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "solutionName": {
-            "type": "string"
-          },
-          "method": {
-            "type": "string",
-            "enum": ["CARD", "VIRTUAL_ACCOUNT", "EASY_PAY"]
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "existReview": {
-            "type": "boolean"
-          },
-          "category": {
-            "type": "string",
-            "enum": [
-              "MARKETING_AUTOMATION_ANALYSIS",
-              "PRODUCT_CONTENT_AUTOMATION",
-              "ECOMMERCE_OPERATION_MANAGEMENT",
-              "INFLUENCER_CREATOR_COLLABORATION"
-            ]
-          }
+          "content": { "type": "array", "items": { "$ref": "#/components/schemas/GetSolutionReviewResponse" } },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" }
         }
       },
-      "BaseResponseGetConsumerInfo": {
+      "GetSolutionReviewResponse": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/GetConsumerInfo"
-          }
+          "solutionReviewSeq": { "type": "integer", "format": "int64" },
+          "profileImageUrl": { "type": "string" },
+          "businessName": { "type": "string" },
+          "rate": { "type": "number", "format": "double" },
+          "context": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" }
         }
       },
-      "GetConsumerInfo": {
+      "PageInfo": {
         "type": "object",
         "properties": {
-          "consumerSeq": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "consumerName": {
-            "type": "string"
-          },
-          "phoneNumber": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "industry": {
-            "type": "string"
-          },
-          "consumerImageUrl": {
-            "type": "string"
-          },
-          "consumerUniqueType": {
-            "type": "string"
-          }
+          "page": { "type": "integer", "format": "int32" },
+          "size": { "type": "integer", "format": "int32" },
+          "totalElements": { "type": "integer", "format": "int64" },
+          "totalPages": { "type": "integer", "format": "int32" },
+          "hasNext": { "type": "boolean" },
+          "hasPrevious": { "type": "boolean" }
         }
       },
-      "BaseResponseListGetAllClientResponse": {
+      "BaseResponseGetSolutionListResponse": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GetAllClientResponse"
-            }
-          }
+          "status": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/GetSolutionListResponse" }
         }
       },
-      "BaseResponseGetChatEntityFile": {
+      "GetSolutionList": {
         "type": "object",
         "properties": {
-          "status": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          },
-          "data": {
-            "$ref": "#/components/schemas/GetChatEntityFile"
-          }
+          "solutionSeq": { "type": "integer", "format": "int64" },
+          "image": { "type": "string" },
+          "name": { "type": "string" },
+          "price": { "type": "integer", "format": "int64" },
+          "cnt": { "type": "integer", "format": "int64" },
+          "average": { "type": "number", "format": "double" },
+          "businessName": { "type": "string" }
         }
       },
-      "GetChatEntityFile": {
+      "GetSolutionListResponse": {
         "type": "object",
         "properties": {
-          "fileUrl": {
-            "type": "string"
-          }
+          "content": { "type": "array", "items": { "$ref": "#/components/schemas/GetSolutionList" } },
+          "page": { "$ref": "#/components/schemas/PageInfo" }
         }
       }
     },
-    "securitySchemes": {
-      "JWT": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    }
+    "securitySchemes": { "JWT": { "type": "http", "scheme": "bearer", "bearerFormat": "JWT" } }
   }
 }

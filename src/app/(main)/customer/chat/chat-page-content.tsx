@@ -8,6 +8,7 @@ import ChatHeader from '@/components/chat/chat-header';
 import ChatLoading from '@/components/chat/chat-loading';
 import ChatPaginator from '@/components/chat/chat-paginator';
 import useChatClient from '@/hooks/use-chat-client';
+import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import type { ChannelFilters, ChannelOptions, ChannelSort, Channel as ChannelType } from 'stream-chat';
@@ -15,14 +16,34 @@ import { Channel, ChannelList, Chat, MessageInput, MessageList, Window } from 's
 import 'stream-chat-react/dist/css/v2/index.css';
 
 const ChatPageContent = () => {
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const channelId = searchParams.get('channel');
-  const { client, isConnecting, error, getChannel } = useChatClient();
+  const vendorSeq = searchParams.get('vendorSeq');
+  const { client, isConnecting, error, getChannel, createOrGetChannel } = useChatClient();
   const [activeChannel, setActiveChannel] = useState<ChannelType | undefined>();
+
+  // vendorSeq가 있으면 1:1 DM 채널 생성/조회
+  useEffect(() => {
+    if (!client || !vendorSeq) return;
+
+    const initVendorChannel = async () => {
+      const currentUserSeq = session?.user?.userSeq;
+      if (!currentUserSeq) return;
+
+      // 서버에서 userSeq로 사용자 정보 조회 후 채널 생성
+      const channel = await createOrGetChannel(currentUserSeq, Number(vendorSeq));
+      if (channel) {
+        setActiveChannel(channel);
+      }
+    };
+
+    initVendorChannel();
+  }, [client, vendorSeq, session, createOrGetChannel]);
 
   // URL에서 채널 ID가 있으면 해당 채널 활성화
   useEffect(() => {
-    if (!client || !channelId) return;
+    if (!client || !channelId || vendorSeq) return;
 
     const initChannel = async () => {
       const channel = await getChannel(channelId);
@@ -32,7 +53,7 @@ const ChatPageContent = () => {
     };
 
     initChannel();
-  }, [client, channelId, getChannel]);
+  }, [client, channelId, vendorSeq, getChannel]);
 
   // 로딩 중
   if (isConnecting || !client) {
@@ -55,7 +76,7 @@ const ChatPageContent = () => {
 
   return (
     <Chat client={client}>
-      <div className="flex flex-row gap-12 h-[calc(100vh-90px)] bg-[#F8F9FB] px-24 py-12">
+      <div className="flex flex-row gap-12 h-[calc(100vh-60px)] bg-[#F8F9FB] px-24 py-12">
         {/* 사이드바: 채팅 목록 */}
         <aside className="w-[400px] shrink-0 shadow-[0px_0px_10px_0px_#0000001A] rounded-[10px] overflow-hidden ">
           <ChannelList

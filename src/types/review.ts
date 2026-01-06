@@ -1,27 +1,39 @@
-import { ISODateString } from './common';
+import { IPageInfo } from './pageable';
 
-export interface ISolutionReview {
-  consumerSeq: number;
-  consumerName: string;
-  consumerImageUrl: string;
-  star: number;
-  comment: string;
-  createdAt: ISODateString;
-}
+// ============ Request Types ============
 
-export interface ISaveReviewRequest extends Record<string, unknown> {
+// 솔루션 리뷰 작성 요청
+export interface ICreateSolutionReviewRequest extends Record<string, unknown> {
   solutionSeq: number;
-  consumerSeq: number;
-  comment: string;
-  star: number;
+  context: string;
+  rate: number;
 }
 
-export interface IModifyReviewRequest extends Record<string, unknown> {
-  solutionReviewSeq: number;
-  comment: string;
-  star: number;
+// 솔루션 리뷰 목록 조회 파라미터
+export interface ISolutionReviewListParams extends Record<string, unknown> {
+  page?: number;
+  size?: number;
 }
 
-export interface ISaveReviewResponse {
+// ============ Response Types ============
+
+// 솔루션 리뷰 작성 응답
+export interface ICreateSolutionReviewResponse {
   solutionReviewSeq: number;
+}
+
+// 솔루션 리뷰 아이템
+export interface IGetSolutionReviewResponse {
+  solutionReviewSeq: number;
+  profileImageUrl?: string;
+  businessName: string;
+  rate: number;
+  context: string;
+  createdAt: string;
+}
+
+// 솔루션 리뷰 목록 조회 응답
+export interface IGetSolutionReviewPageResponse {
+  content: IGetSolutionReviewResponse[];
+  pageInfo: IPageInfo;
 }

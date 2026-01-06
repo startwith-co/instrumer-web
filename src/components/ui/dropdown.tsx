@@ -18,6 +18,7 @@ interface DropdownProps {
   children: React.ReactNode;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string;
 }
 
 interface DropdownTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -54,7 +55,7 @@ const useDropdown = () => {
 };
 
 // Root Component
-const DropdownRoot = ({ children, defaultOpen = false, onOpenChange }: DropdownProps) => {
+const DropdownRoot = ({ children, defaultOpen = false, onOpenChange, className }: DropdownProps) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
@@ -119,7 +120,7 @@ const DropdownRoot = ({ children, defaultOpen = false, onOpenChange }: DropdownP
 
   return (
     <DropdownContext.Provider value={{ isOpen, toggle, close, open, triggerRef, contentRef }}>
-      <div className="relative inline-block">{children}</div>
+      <div className={cn('relative inline-block', className)}>{children}</div>
     </DropdownContext.Provider>
   );
 };
