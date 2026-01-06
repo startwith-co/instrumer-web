@@ -6,6 +6,7 @@ import { Dropdown } from '@/components/ui/dropdown';
 import { CATEGORY_OPTIONS } from '@/constants/solution-constants';
 import { useUser } from '@/lib/user';
 import { ChevronDown } from '@medusajs/icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -14,12 +15,14 @@ import { Suspense } from 'react';
 
 const Header = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session, status } = useSession();
   const { data: userData } = useUser();
   const user = userData?.data;
 
   const handleSignOut = async () => {
     await signOut({ redirect: false });
+    queryClient.removeQueries({ queryKey: ['/api/users'] });
     router.push('/');
   };
 
@@ -66,8 +69,12 @@ const Header = () => {
                 {user?.userType === 'VENDOR' ? (
                   <Dropdown.Item onSelect={() => router.push('/vendor/solutions')}>솔루션 관리</Dropdown.Item>
                 ) : (
-                  <Dropdown.Item onSelect={() => router.push('/consumer/mypage')}>마이페이지</Dropdown.Item>
+                  <>
+                    <Dropdown.Item onSelect={() => router.push('/customer/mypage/info')}>내 정보</Dropdown.Item>
+                    <Dropdown.Item onSelect={() => router.push('/customer/mypage/history')}>결제 이력</Dropdown.Item>
+                  </>
                 )}
+                <Dropdown.Separator />
                 <Dropdown.Item className="text-red-500 hover:text-red-700" onSelect={handleSignOut}>
                   로그아웃
                 </Dropdown.Item>

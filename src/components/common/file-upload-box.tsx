@@ -3,6 +3,13 @@
 import S3Uploader from '@/components/common/s3-uploader';
 import { Plus, Upload, X } from 'lucide-react';
 import Image from 'next/image';
+import { ReactNode } from 'react';
+
+interface RenderProps {
+  open: () => void;
+  uploading: boolean;
+  progress: number;
+}
 
 interface SingleFileUploadBoxProps {
   value: string;
@@ -19,6 +26,7 @@ interface SingleFileUploadBoxProps {
   aspectRatio?: string;
   className?: string;
   error?: string;
+  children?: (props: RenderProps) => ReactNode;
 }
 
 interface MultiFileUploadBoxProps {
@@ -149,8 +157,18 @@ const FileUploadBox = (props: FileUploadBoxProps) => {
   }
 
   // Single 모드 (기존 로직)
-  const { value, onChange } = props;
+  const { value, onChange, children } = props;
 
+  // children이 있으면 커스텀 렌더링
+  if (children) {
+    return (
+      <S3Uploader onSuccess={(urls) => onChange(urls[0])} accept={fileAccept} maxSize={maxSize}>
+        {({ open, uploading, progress }) => children({ open, uploading, progress })}
+      </S3Uploader>
+    );
+  }
+
+  // 기존 UI 렌더링
   if (value) {
     return (
       <div

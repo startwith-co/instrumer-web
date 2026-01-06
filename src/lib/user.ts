@@ -1,8 +1,10 @@
+import { fetchApi } from './base';
 import { IBaseResponse } from '@/types/api';
 import { UserType } from '@/types/auth';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 export interface IUserResponse {
   userSeq: number;
@@ -59,4 +61,39 @@ export const fetchUserInfoByUserSeq = async (userSeq: number): Promise<IUserResp
     console.error('Failed to fetch user info:', error);
     return null;
   }
+};
+
+// 사용자 정보 수정 요청 타입
+export interface IUpdateUserRequest {
+  email?: string;
+  password?: string;
+  profileImageUrl?: string;
+  businessName?: string;
+  phone?: string;
+  [key: string]: string | undefined;
+}
+
+// 사용자 정보 수정 Mutation
+export const useUpdateUserMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (data: IUpdateUserRequest) => await fetchApi.put<IBaseResponse<string>>('/api/users', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/users'] });
+    },
+  });
+};
+
+// 사용자 삭제 (탈퇴) Mutation
+export const useDeleteUserMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => await fetchApi.delete<IBaseResponse<string>>('/api/users'),
+    onSuccess: async () => {
+      await signOut({ redirect: false });
+      queryClient.removeQueries({ queryKey: ['/api/users'] });
+      redirect('/');
+    },
+  });
 };
