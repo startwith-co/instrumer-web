@@ -44,14 +44,18 @@ export interface ISolutionPlanDetail {
   context: string;
 }
 
-// 솔루션 플랜
-export interface ISolutionPlan {
-  planSeq: number;
+// 새 플랜 생성용 (planSeq 없음)
+export interface ICreateSolutionPlan {
   name: string;
   subName?: string;
   price: number | null; // null = 가격 문의
   planType: string;
   details?: ISolutionPlanDetail[];
+}
+
+// 솔루션 플랜 (API 응답용, planSeq 필수)
+export interface ISolutionPlan extends ICreateSolutionPlan {
+  planSeq: number;
 }
 
 // ============ Request Types ============
@@ -63,7 +67,7 @@ export interface ICreateSolutionRequest extends Record<string, unknown> {
   category: string;
   price: number;
   images?: ISolutionImage[];
-  plans?: ISolutionPlan[];
+  plans?: ICreateSolutionPlan[];
   keywords?: string[];
 }
 
@@ -75,7 +79,7 @@ export interface IUpdateSolutionRequest extends Record<string, unknown> {
   category: string;
   price: number;
   images?: ISolutionImage[];
-  plans?: ISolutionPlan[];
+  plans?: ICreateSolutionPlan[];
   keywords?: string[];
 }
 
