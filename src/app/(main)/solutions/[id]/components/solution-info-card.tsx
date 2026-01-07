@@ -16,11 +16,9 @@ const SolutionInfoCard = ({ solution }: SolutionInfoCardProps) => {
   };
 
   const handleWebsiteClick = () => {
-    // TODO: Website URL이 API에 추가되면 새 탭에서 열기
-    // if (solution.websiteUrl) {
-    //   window.open(solution.websiteUrl, '_blank');
-    // }
-    console.log('웹사이트 이동 클릭');
+    if (solution.webUrl) {
+      window.open(solution.webUrl, '_blank');
+    }
   };
 
   return (
