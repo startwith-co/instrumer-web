@@ -26,7 +26,7 @@ const PaymentPageContent = ({ solutionId, planId }: PaymentPageContentProps) => 
   // planId에 해당하는 플랜 찾기
   const selectedPlan: ISolutionPlan | null = useMemo(() => {
     if (!solution?.plans || !planId) return null;
-    return solution.plans.find((plan) => plan.planSeq === planId) || null;
+    return solution.plans.find((plan) => plan.solutionPlanSeq === planId) || null;
   }, [solution?.plans, planId]);
 
   // 결제 금액 (플랜 가격 우선, 없으면 솔루션 기본 가격)

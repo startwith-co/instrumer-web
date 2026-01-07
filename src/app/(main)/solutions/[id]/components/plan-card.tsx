@@ -23,7 +23,7 @@ const PlanCard = ({ solutionSeq, plan, vendorSeq }: PlanCardProps) => {
       openLoginModal();
       return;
     }
-    router.push(`/payment/${solutionSeq}?planId=${plan.planSeq}`);
+    router.push(`/payment/${solutionSeq}?planId=${plan.solutionPlanSeq}`);
   };
 
   const handlePriceInquiry = () => {
