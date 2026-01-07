@@ -44,8 +44,9 @@ export interface ISolutionPlanDetail {
   context: string;
 }
 
-// 새 플랜 생성용 (planSeq 없음)
-export interface ICreateSolutionPlan {
+// 솔루션 플랜 (API 응답용)
+export interface ISolutionPlan {
+  solutionPlanSeq: number;
   name: string;
   subName?: string;
   price: number | null; // null = 가격 문의
@@ -53,10 +54,8 @@ export interface ICreateSolutionPlan {
   details?: ISolutionPlanDetail[];
 }
 
-// 솔루션 플랜 (API 응답용, planSeq 필수)
-export interface ISolutionPlan extends ICreateSolutionPlan {
-  planSeq: number;
-}
+// 새 플랜 생성용 (solutionPlanSeq 제외)
+export type ICreateSolutionPlan = Omit<ISolutionPlan, 'solutionPlanSeq'>;
 
 // ============ Request Types ============
 
@@ -66,6 +65,7 @@ export interface ICreateSolutionRequest extends Record<string, unknown> {
   explanation: string;
   category: string;
   price: number;
+  webUrl: string;
   images?: ISolutionImage[];
   plans?: ICreateSolutionPlan[];
   keywords?: string[];
@@ -78,6 +78,7 @@ export interface IUpdateSolutionRequest extends Record<string, unknown> {
   explanation: string;
   category: string;
   price: number;
+  webUrl: string;
   images?: ISolutionImage[];
   plans?: ICreateSolutionPlan[];
   keywords?: string[];
@@ -106,6 +107,7 @@ export interface IGetSolutionResponse {
   explanation: string;
   category: string;
   price: number;
+  webUrl?: string;
   images?: ISolutionImage[];
   plans?: ISolutionPlan[];
   reviewCnt: number;

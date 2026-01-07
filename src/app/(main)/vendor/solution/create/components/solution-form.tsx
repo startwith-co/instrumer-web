@@ -14,6 +14,7 @@ export interface ISolutionFormData {
   explanation: string;
   category: string;
   price: number;
+  webUrl: string;
   thumbnailUrl: string;
   pdfUrl: string;
   additionalImages: string[];
@@ -31,6 +32,7 @@ const SolutionForm = () => {
       explanation: '',
       category: '',
       price: 0,
+      webUrl: '',
       thumbnailUrl: '',
       pdfUrl: '',
       additionalImages: [],
@@ -62,6 +64,7 @@ const SolutionForm = () => {
         explanation: data.explanation,
         category: data.category,
         price: data.price,
+        webUrl: data.webUrl,
         images: images.length > 0 ? (images as ISolutionImage[]) : undefined,
         plans: data.plans.length > 0 ? data.plans : undefined,
         keywords: data.keywords.length > 0 ? data.keywords : undefined,

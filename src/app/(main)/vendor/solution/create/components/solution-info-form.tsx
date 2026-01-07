@@ -5,6 +5,7 @@ import FileUploadBox from '@/components/common/file-upload-box';
 import { ControlledInput } from '@/components/ui/controlled-input';
 import { Dropdown } from '@/components/ui/dropdown';
 import Textarea from '@/components/ui/textarea';
+import { REGEX } from '@/constants/regex-constants';
 import { CATEGORY_OPTIONS } from '@/constants/solution-constants';
 import { ChevronDown } from 'lucide-react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -75,8 +76,23 @@ const SolutionInfoForm = () => {
           />
         </div>
 
-        {/* 여백 */}
-        <div></div>
+        {/* 솔루션 웹사이트 URL */}
+        <div className="mb-6">
+          <label className="mb-2 block text-sm text-gray-700">
+            솔루션 웹사이트 URL <span className="text-red-500">*</span>
+          </label>
+          <ControlledInput
+            form={form}
+            name="webUrl"
+            type="url"
+            variant="underline"
+            placeholder="솔루션 웹사이트 URL을 입력해주세요. (예: https://example.com)"
+            rules={{
+              required: '웹사이트 URL을 입력해주세요.',
+              pattern: { value: REGEX.URL, message: '올바른 URL 형식이 아닙니다.' },
+            }}
+          />
+        </div>
 
         {/* 솔루션 카테고리 */}
         <div className="mb-8">
