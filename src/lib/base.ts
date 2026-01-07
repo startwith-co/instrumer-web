@@ -1,7 +1,7 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options';
 import axios from 'axios';
 import { getServerSession } from 'next-auth';
-import { getSession, signOut } from 'next-auth/react';
+import { getSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 
 type Body = Record<string, unknown> | Record<string, unknown>[] | FormData;
@@ -38,23 +38,13 @@ const _fetchApi = async <T = object>({ method, url, body }: IFetchApiArgs): Prom
       ...(session?.user?.accessToken && { Authorization: `Bearer ${session.user.accessToken}` }),
     },
     withCredentials: true,
-  }).catch(async (error) => {
-    const isUnauthorized = error?.response?.status === 401;
-
-    // Case. SSR - 401 시 로그인 페이지로 리다이렉트
-    if (typeof window === 'undefined') {
-      if (isUnauthorized) {
-        redirect('/');
-      }
-      throw error;
-    }
-
-    // Case CSR - 401 시 로그아웃 후 리다이렉트
-    if (isUnauthorized && window.location.pathname !== '/') {
-      await signOut({ redirect: false });
+  }).catch((error) => {
+    // SSR에서만 401 시 redirect 처리 (서버에서는 redirect가 정상 동작)
+    if (typeof window === 'undefined' && error?.response?.status === 401) {
       redirect('/');
     }
 
+    // CSR에서는 에러 throw (query-provider에서 통합 처리)
     throw error;
   });
 

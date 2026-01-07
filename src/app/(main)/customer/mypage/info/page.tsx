@@ -4,6 +4,7 @@ import FileUploadBox from '@/components/common/file-upload-box';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ControlledInput } from '@/components/ui/controlled-input';
+import { useAlert } from '@/contexts/alert-provider';
 import { useDeleteUserMutation, useSuspenseUserInfo, useUpdateUserMutation } from '@/lib/user';
 import { Camera } from '@medusajs/icons';
 import { Suspense, useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ interface IMyInfoFormData {
 }
 
 const MyInfoContent = () => {
+  const { alert } = useAlert();
   const { data: userData } = useSuspenseUserInfo();
   const user = userData?.data;
 
@@ -58,7 +60,14 @@ const MyInfoContent = () => {
         profileImageUrl: profileImageUrl,
       };
 
-      await updateUser(updateData);
+      await updateUser(updateData, {
+        onSuccess: () => {
+          alert({
+            variant: 'success',
+            children: '정보가 성공적으로 수정되었습니다.',
+          });
+        },
+      });
     } catch (error) {
       console.error('정보 수정 실패:', error);
     }

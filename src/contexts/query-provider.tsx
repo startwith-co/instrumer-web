@@ -6,6 +6,7 @@ import { getErrorMessage, isUnauthorizedError } from '@/lib/error';
 import { getClearObject } from '@/utils/utils';
 import { MutationCache, QueryCache, QueryClient, QueryClientProvider, keepPreviousData } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { signOut } from 'next-auth/react';
 import { useState } from 'react';
 
 export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
@@ -15,8 +16,13 @@ export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
     return fetchApi.get(url, params);
   };
 
-  const handleError = (error: Error) => {
-    if (isUnauthorizedError(error)) return;
+  const handleError = async (error: Error) => {
+    // 401 에러: 로그아웃 후 홈으로 리다이렉트
+    if (isUnauthorizedError(error)) {
+      await signOut({ redirect: false });
+      window.location.href = '/';
+      return;
+    }
 
     alert({
       variant: 'error',
@@ -38,7 +44,8 @@ export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
             retry: false,
             staleTime: 1000 * 60,
             gcTime: 1000 * 60 * 5,
-            throwOnError: true,
+            // 401 에러는 Error Boundary로 전파하지 않음 (handleError에서 처리)
+            throwOnError: (error) => !isUnauthorizedError(error),
             queryFn: ({ queryKey }) =>
               fetcher(queryKey[0] as string, queryKey[1] ? getClearObject(queryKey[1]) : undefined),
             placeholderData: keepPreviousData,

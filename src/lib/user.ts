@@ -4,7 +4,6 @@ import { UserType } from '@/types/auth';
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { signOut, useSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
 
 export interface IUserResponse {
   userSeq: number;
@@ -93,7 +92,7 @@ export const useDeleteUserMutation = () => {
     onSuccess: async () => {
       await signOut({ redirect: false });
       queryClient.removeQueries({ queryKey: ['/api/users'] });
-      redirect('/');
+      window.location.href = '/';
     },
   });
 };
